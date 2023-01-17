@@ -4,12 +4,9 @@ const prisma = new PrismaClient();
 import { emotion, Scope } from "../utils/Types";
 
 class diaryRepository {
-  static async post(
-    userId: string,
-    data: any,
-    emotion: emotion,
-    encode: string
-  ) {
+  static async post(userId: string, data: any, emotion: emotion) {
+    console.log("1");
+
     const diary = await prisma.diary.create({
       data: {
         title: data.title,
@@ -18,16 +15,17 @@ class diaryRepository {
         scope: data.scope,
         // img: data?.location,
         emotion: emotion,
-        encode: encode,
+        // encode: encode,
         user: {
           connect: { id: userId },
         },
       },
     });
+    console.log("2");
     return diary;
   }
 
-  static async updateDiary(newData: any, emotion: emotion, encode: string) {
+  static async updateDiary(newData: any, emotion: emotion) {
     const updateDiary = await prisma.diary.update({
       where: {
         id: newData.id,
@@ -38,7 +36,7 @@ class diaryRepository {
         subTitle: newData.subTitle,
         scope: newData.scope,
         emotion: emotion,
-        encode: encode,
+        // encode :encode,
       },
     });
     return updateDiary;

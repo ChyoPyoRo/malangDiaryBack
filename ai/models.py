@@ -1,11 +1,10 @@
 from pydantic import BaseModel
-# import sentence_transformers
 import numpy as np
 import pandas as pd
 from numpy import dot
 from numpy.linalg import norm
 import urllib.request
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 from typing import Optional, List
 ###
 import re
@@ -26,61 +25,61 @@ class dataType(BaseModel):
 
 class model:
 
-    def sentenceSimilarity(data: dataType):
-        print(data)
-        model = SentenceTransformer(
-            'sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens')
-        rawData = data.input
-        currentContent = model.encode(rawData)
-        compareContentString = data.vector
-        simList = []
-        # print("🔥🔥1")
+    # def sentenceSimilarity(data: dataType):
+    #     print(data)
+    #     model = SentenceTransformer(
+    #         'sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens')
+    #     rawData = data.input
+    #     currentContent = model.encode(rawData)
+    #     compareContentString = data.vector
+    #     simList = []
+    #     # print("🔥🔥1")
 
-        def tofloat(data):
-            data = data.replace("[", "").replace(
-                "]", "").replace("\n", "").split(" ")
-            data = [float(i) for i in data if i != '']
-            return data
+    #     def tofloat(data):
+    #         data = data.replace("[", "").replace(
+    #             "]", "").replace("\n", "").split(" ")
+    #         data = [float(i) for i in data if i != '']
+    #         return data
 
-        for vec in compareContentString:
-            result = np.array(tofloat(vec))
-            simList.append(result)
+    #     for vec in compareContentString:
+    #         result = np.array(tofloat(vec))
+    #         simList.append(result)
 
-        def cos_sim(a, b):
-            return dot(a, b)/(norm(a)*norm(b))
+    #     def cos_sim(a, b):
+    #         return dot(a, b)/(norm(a)*norm(b))
 
-        simDic = {}
-        for i in range(len(simList)-3):
-            result = cos_sim(currentContent, simList[i])
-            simDic[i] = result
-        # print("🔥🔥2")
+    #     simDic = {}
+    #     for i in range(len(simList)-3):
+    #         result = cos_sim(currentContent, simList[i])
+    #         simDic[i] = result
+    #     # print("🔥🔥2")
 
-        sortedDic = sorted(
-            simDic.items(), key=lambda item: item[1], reverse=True)
+    #     sortedDic = sorted(
+    #         simDic.items(), key=lambda item: item[1], reverse=True)
 
-        resultList = []
-        for i in range(3):
-            resultList.append(sortedDic[i][0])
-        print("🔥🔥3")
-        print("sim dic 형태확인용 ", resultList)
+    #     resultList = []
+    #     for i in range(3):
+    #         resultList.append(sortedDic[i][0])
+    #     print("🔥🔥3")
+    #     print("sim dic 형태확인용 ", resultList)
 
-        currentContentVec = np.array2string(currentContent)
-        returnValue = {"result":resultList, "vector":currentContentVec}
-        # returnValue = {"result":"임시", "vector":currentContentVec}
-        return returnValue
+    #     currentContentVec = np.array2string(currentContent)
+    #     returnValue = {"result":resultList, "vector":currentContentVec}
+    #     # returnValue = {"result":"임시", "vector":currentContentVec}
+    #     return returnValue
 
-    def sentenceSimilarityUpdate(data: latestContent):
-        model = SentenceTransformer(
-            'sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens')
-        rawData = data.content
-        currentContent = model.encode(rawData)
+    # def sentenceSimilarityUpdate(data: latestContent):
+    #     model = SentenceTransformer(
+    #         'sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens')
+    #     rawData = data.content
+    #     currentContent = model.encode(rawData)
 
-        currentContentVec = np.array2string(currentContent)
-        # returnValue = {"vector":currentContentVec}
-        return currentContentVec
+    #     currentContentVec = np.array2string(currentContent)
+    #     # returnValue = {"vector":currentContentVec}
+    #     return currentContentVec
 
     def emotionAnalysis(content: latestContent):
-
+        print("model!!!",content)
         model = load_model('team10_roberta_word_1212.h5')
 
         def text_cleaning(content):
@@ -106,6 +105,7 @@ class model:
         idx = np.argmax(result)
         emotion_dict = {0: '감사한', 1: '신이 난', 2: '자신감',
                         3: '편안한', 4: '분노', 5: '불안', 6: '상처', 7: '슬픔'}
+        print("model 여기 안오나?")
 
         return emotion_dict[idx]
 

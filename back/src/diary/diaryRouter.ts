@@ -26,7 +26,7 @@ diaryRouter.post(
         scope,
         // img
       };
-      console.log(data);
+      // console.log(data);
 
       const post = await diaryService.postingDiary(userId, data);
       res.status(201).send(post);

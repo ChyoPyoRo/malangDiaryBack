@@ -3,8 +3,8 @@ import { emotion, Scope } from "../utils/Types";
 import { diary } from "@prisma/client";
 import {
   emotionAnalysis,
-  sentenceSimilarity,
-  sentenceSimilarityUpdate,
+  // sentenceSimilarity,
+  // sentenceSimilarityUpdate,
 } from "../middlewares/axios";
 import { encode } from "querystring";
 import { nameCheck } from "../middlewares/nameCheck";
@@ -24,44 +24,43 @@ class diaryService {
     // const emotion: emotion = "자신감";
     // 🤖🤖🤖 2. 문장 유사도 모델  🤖🤖🤖
     //디비에서 친구 스코프 조회할 때 쓸 친구 리스트 가져오기
-    const friends = await diaryRepository.getFriendId(userId);
+    // const friends = await diaryRepository.getFriendId(userId);
     //디비 접근해서 내림차순 정렬 후 기간 범위 조건걸기
     // const contentList1 = await diaryController.getContentList(friends);
-    const vector = await diaryRepository.recentVecList(userId);
-    const diary0 = await diaryRepository.recentDiaryList(userId);
+    // const vector = await diaryRepository.recentVecList(userId);
+    // const diary0 = await diaryRepository.recentDiaryList(userId);
 
-    const vectorList = vector.map((x) => x.encode);
-    const inputData = {
-      input: content,
-      vector: vectorList,
-    };
+    // const vectorList = vector.map((x) => x.encode);
+    // const inputData = {
+    //   input: content,
+    //   vector: vectorList,
+    // };
 
-    console.log("🦄🌈axios 연결 테스트", emotion);
-    const sentSimResult = await sentenceSimilarity(inputData);
+    // console.log("🦄🌈axios 연결 테스트", emotion);
+    // const sentSimResult = await sentenceSimilarity(inputData);
 
-    const SimdiaryList = [
-      diary0[sentSimResult.result[0]],
-      diary0[sentSimResult.result[1]],
-      diary0[sentSimResult.result[2]],
-    ];
+    // const SimdiaryList = [
+    //   diary0[sentSimResult.result[0]],
+    //   diary0[sentSimResult.result[1]],
+    //   diary0[sentSimResult.result[2]],
+    // ];
 
     const postingDiary: diary = await diaryRepository.post(
       userId,
       data,
-      emotion,
-      sentSimResult.vector
+      emotion
     );
-    const postSimList = await diaryRepository.postSimList(
-      SimdiaryList,
-      postingDiary
-    );
+    // const postSimList = await diaryRepository.postSimList(
+    //   SimdiaryList,
+    //   postingDiary
+    // );
 
-    const DiaryReturns = {
-      currentDiary: postingDiary,
-      simdiaryList: SimdiaryList,
-    };
+    // const DiaryReturns = {
+    //   currentDiary: postingDiary,
+    //   simdiaryList: SimdiaryList,
+    // };
     // return SimdiaryList;
-    return DiaryReturns;
+    return postingDiary;
   }
 
   static async modifyDiary(userId: string, newData: any) {
@@ -73,12 +72,12 @@ class diaryService {
     );
     const contentdata = { content: content };
     const emotion: any = await emotionAnalysis(contentdata);
-    const encode = await sentenceSimilarityUpdate(contentdata);
+    // const encode = await sentenceSimilarityUpdate(contentdata);
     await diaryRepository.updateUserEmotion(userId, emotion);
     const modifyDiary: diary = await diaryRepository.updateDiary(
       newData,
-      emotion,
-      encode
+      emotion
+      // encode
     );
     return modifyDiary;
   }

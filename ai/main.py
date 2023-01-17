@@ -1,14 +1,6 @@
-from ast import List
 from concurrent.futures.process import _ResultItem
-import imp
-import json
-import string
-from tkinter import Listbox
 import uvicorn
-from typing import Optional, List
-from unittest import result
-from fastapi.encoders import jsonable_encoder
-
+# from fastapi.encoders import jsonable_encoder
 from typing import Optional, List
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,8 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import models
 from pydantic import BaseModel
 
-# uvicorn main:app --reload
-# https://hashdork.com/ko/how-to-build-and-deploy-a-machine-learning-model-with-fastapi/
+"""
+conda activate
+uvicorn main:app --reload
+
+"""
 
 app = FastAPI()
 
@@ -28,9 +23,9 @@ class latestContent(BaseModel):
     content: str
 
 
-class dataType(BaseModel):
-    input: str
-    vector: List[str] = []
+# class dataType(BaseModel):
+#     input: str
+#     vector: List[str] = []
 
 
 class data(BaseModel):
@@ -57,26 +52,26 @@ def read_root():
     return data
 
 
-@app.post("/sentenceSimilarity")
-def sentenceSimilarity(req: dataType):
-    # print("data==이러면 오나??", req)
-    result = models.model.sentenceSimilarity(req)
-    print(result)
-    return result
+# @app.post("/sentenceSimilarity")
+# def sentenceSimilarity(req: dataType):
+#     # print("data==이러면 오나??", req)
+#     result = models.model.sentenceSimilarity(req)
+#     print(result)
+#     return result
 
 
-@app.patch("/sentenceSimilarity")
-def sentenceSimilarityUpdate(req: latestContent):
-    print("문장유사도 patch main")
-    result = models.model.sentenceSimilarityUpdate(req)
-    print(result)
-    return result
-    # return "??"
+# @app.patch("/sentenceSimilarity")
+# def sentenceSimilarityUpdate(req: latestContent):
+#     print("문장유사도 patch main")
+#     result = models.model.sentenceSimilarityUpdate(req)
+#     print(result)
+#     return result
+#     # return "??"
 
 
 @app.post("/emotionAnalysis")
 def emotionAnalysis(req: latestContent):
     print("감정추출 main", req)
     result = models.model.emotionAnalysis(req)
-    print(result)
+    print("여기가 안찍히넹",result)
     return result

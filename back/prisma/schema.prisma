@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id           String         @id @unique @default(uuid())
+  email        String         @db.VarChar(40)
+  name         String         @unique @db.VarChar(20)
+  password     String         @db.VarChar(60)
+  description  String?        @db.VarChar(100)
+  createAt     DateTime       @default(now())
+  updateAt     DateTime       @updatedAt
+  withdrawal   Int            @default(0) @db.TinyInt
+  emotion      String?        @db.VarChar(20)
+  diary        diary[]
+  emotionData  emotionData[]
+  friend       friend[]
+  message      message[]
+  refreshToken refreshToken[]
+}
+
+model emailAuthentication {
+  id          Int    @id @unique @default(autoincrement())
+  email       String @db.VarChar(40)
+  CertiNumber Int
+}
+
+model diary {
+  id       Int      @id @unique @default(autoincrement())
+  userId   String
+  img      String?  @db.VarChar(200)
+  content  String   @db.VarChar(1000)
+  emotion  String?  @db.VarChar(20)
+  scope    String   @db.VarChar(10)
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  title    String   @db.VarChar(40)
+  subTitle String?  @db.VarChar(40)
+  encode   String?  @db.VarChar(14000)
+  user     user     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "diary_userId_fkey")
+}
+
+model message {
+  id       String   @id @unique @default(uuid())
+  userId   String
+  text     String   @db.VarChar(200)
+  createAt DateTime @default(now())
+  room     String
+  chatRoom chatRoom @relation(fields: [room], references: [id])
+  user     user     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "message_userId_fkey")
+  @@index([room], map: "message_room_fkey")
+}
+
+model chatRoom {
+  id        String    @id @unique @default(uuid())
+  userIdFst String
+  userIdSnd String
+  latest    DateTime
+  message   message[]
+}
+
+model standByFriend {
+  id           String   @id @unique @default(uuid())
+  requester    String
+  respondent   String   @db.VarChar(40)
+  relationship Int      @default(0) @db.TinyInt
+  createAt     DateTime @default(now())
+}
+
+model friend {
+  id       String @id @unique @default(uuid())
+  friendId String
+  userId   String @db.VarChar(40)
+  user     user   @relation(fields: [friendId], references: [id])
+
+  @@index([friendId], map: "friend_friendId_fkey")
+}
+
+model refreshToken {
+  id           String @id @unique @default(uuid())
+  refreshToken String @db.VarChar(500)
+  userId       String
+  user         user   @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "refreshToken_userId_fkey")
+}
+
+model emotionData {
+  id       String   @id @unique @default(uuid())
+  userId   String
+  emotion  String   @db.VarChar(20)
+  createAt DateTime @default(now())
+  user     user     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "emotionData_userId_fkey")
+}
+
+model sim {
+  id          Int @id @unique @default(autoincrement())
+  currentPost Int
+  one         Int
+  two         Int
+  three       Int
+}

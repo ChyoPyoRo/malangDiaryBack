@@ -1,0 +1,11 @@
+import { Secret } from "jsonwebtoken";
+declare const port: number;
+declare const JWT_SECRET_KEY: Secret;
+declare const DATABASE_URL: string;
+declare const s3AccessKey: string;
+declare const s3SecretKey: string;
+declare const bucketName: string;
+declare const region: string;
+declare const nodemailerId: string;
+declare const nodemailerPW: string;
+export { port, JWT_SECRET_KEY, DATABASE_URL, s3AccessKey, s3SecretKey, bucketName, region, nodemailerId, nodemailerPW, };

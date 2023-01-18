@@ -81,28 +81,35 @@ class model:
     def emotionAnalysis(content: latestContent):
         print("model!!!",content)
         model = load_model('team10_roberta_word_1212.h5')
+        print("model 못 불러오는거 같은데?",model)
 
         def text_cleaning(content):
             text = content.content
+            print("model textcleaning","👾")
 
             okt = Okt()
             words = okt.pos(text, stem=True)
+            print("model textcleaning","👾👾")
             words_avn = [word[0] for word in words if word[1] ==
                          'Adjective' or word[1] == 'Verb' or word[1] == 'Noun']
 
+            print("model words_avn","👾👾👾")
             return words_avn
 
         with open('./tokenizer_1212.pkl', 'rb') as tk:
+            print("tokenizer","👾👾👾👾")
             tokenizer = pickle.load(tk)
 
         word_index = tokenizer.word_index
 
         X = tokenizer.texts_to_sequences(text_cleaning(content))
 
+        print("tokenizer","🐥")
         prediction = np.array(model.predict(X))
         result = prediction.sum(axis=0)
 
         idx = np.argmax(result)
+        print("idx","🐥", idx)
         emotion_dict = {0: '감사한', 1: '신이 난', 2: '자신감',
                         3: '편안한', 4: '분노', 5: '불안', 6: '상처', 7: '슬픔'}
         print("model 여기 안오나?")

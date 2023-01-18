@@ -1,0 +1,49 @@
+config:
+  target: "http://localhost:5000"
+  tls:
+  rejectUnauthorized: false
+  phases:
+    - duration: 120
+      arrivalRate: 5
+  # payload:
+  #   path: "keywords.csv"
+  #   fields:
+  #     - "keyword"
+scenarios:
+  - name: "로그인"
+    flow:
+      - post:
+          url: "/users/login"
+          json:
+            kw: { "email": "test", "password": "1111" }
+          capture:
+            json: "user"
+            as: "profile"
+
+  # npx artillery run scenarios.yaml
+#  - post:
+#           url: "/users/login"
+#           json:
+#             kw: "{{ keyword }}"
+#           capture:
+#             - json: "$.results[0].id"
+#               as: "productId"
+
+# config:
+#   target: "http://localhost:5000"
+#   phases:
+#     - duration: 60
+#       arrivalRate: 5
+#       name: Warm up
+#     - duration: 120
+#       arrivalRate: 5
+#       rampTo: 50
+#       name: Ramp up load
+# scenarios:
+#   - name: "회원가입"
+#     flow:
+#       - get:
+#           url: "/users/getUserProfile/test1"
+#           capture:
+#             json: "user"
+#             as: "profile"

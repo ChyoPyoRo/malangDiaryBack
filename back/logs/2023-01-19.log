@@ -1,0 +1,22 @@
+2023-01-19 15:54:45 info: 정상적으로 서버를 시작하였습니다. http://localhost:5000
+2023-01-19 15:56:36 info: Server listening on port:5000
+2023-01-19 15:58:32 info: Server listening on port : 5000
+2023-01-19 16:03:03 info: Server listening on port : 5000
+2023-01-19 16:07:02 info: Server listening on port : 5000
+2023-01-19 16:08:11 info: Server listening on port : 5000
+2023-01-19 16:08:15 error: [33m%s[0m
+2023-01-19 16:08:48 info: Server listening on port : 5000
+2023-01-19 16:08:50 error: [33m%s[0m
+2023-01-19 16:09:42 info: Server listening on port : 5000
+2023-01-19 16:10:25 info: Server listening on port : 5000
+2023-01-19 16:10:27 error: [33m%s[0m
+2023-01-19 16:12:33 info: Server listening on port : 5000
+2023-01-19 16:12:35 error: [33m%s[0m
+2023-01-19 17:07:56 info: Server listening on port : 5000
+2023-01-19 17:24:43 info: Server listening on port : 5000
+2023-01-19 17:25:37 info: Server listening on port : 5000
+2023-01-19 17:25:46 info: Server listening on port : 5000
+2023-01-19 17:25:49 error: [33m%s[0m
+2023-01-19 17:26:28 info: Server listening on port : 5000
+2023-01-19 17:26:31 error: This email doesn't exist
+2023-01-19 17:27:02 info: Server listening on port : 5000

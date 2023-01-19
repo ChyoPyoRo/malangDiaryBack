@@ -9,6 +9,7 @@ import { errorMiddleware } from "./middlewares/errorMiddleware";
 import { chatRouter } from "./chat/chatRouter";
 import { createServer } from "http";
 import { setUpSocket } from "./component/socket";
+import { logger } from "./configs/winston";
 
 const app: express.Application = express();
 app.use(
@@ -35,5 +36,10 @@ const httpServer = createServer(app);
 
 app.use(errorMiddleware);
 httpServer.listen(port, () => {
-  console.log(`정상적으로 서버를 시작하였습니다. http://localhost:${port}`);
+  logger.info(`Server listening on port : ${port}`);
+});
+
+app.get("/error", (req, res) => {
+  logger.error("Error message");
+  res.sendStatus(500);
 });

@@ -31,20 +31,35 @@ model emailAuthentication {
 }
 
 model diary {
-  id       Int      @id @unique @default(autoincrement())
+  PK_diary       Int      @id @unique @default(autoincrement())
   userId   String
+  emotion  String  
+  userName String
   img      String?  @db.VarChar(200)
   content  String   @db.VarChar(1000)
-  emotion  String?  @db.VarChar(20)
   scope    String   @db.VarChar(10)
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
   title    String   @db.VarChar(40)
   subTitle String?  @db.VarChar(40)
-  encode   String?  @db.VarChar(14000)
   user     user     @relation(fields: [userId], references: [id])
+  diaryEmotion diaryEmotion?
 
   @@index([userId], map: "diary_userId_fkey")
+}
+
+model diaryEmotion{
+PK_emotion Int @id @unique @default(autoincrement())
+diaryId Int @unique
+diary diary @relation(fields: [diaryId], references: [PK_diary])
+Excited Float
+Comfort Float
+Confidence Float
+thanks Float
+Sadness Float
+Anger Float
+Anxiety Float
+hurt Float
 }
 
 model message {
@@ -95,7 +110,7 @@ model refreshToken {
 }
 
 model emotionData {
-  id       String   @id @unique @default(uuid())
+  PK_emotionData       String   @id @unique @default(uuid())
   userId   String
   emotion  String   @db.VarChar(20)
   createAt DateTime @default(now())
@@ -104,10 +119,3 @@ model emotionData {
   @@index([userId], map: "emotionData_userId_fkey")
 }
 
-model sim {
-  id          Int @id @unique @default(autoincrement())
-  currentPost Int
-  one         Int
-  two         Int
-  three       Int
-}

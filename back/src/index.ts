@@ -38,8 +38,3 @@ app.use(errorMiddleware);
 httpServer.listen(port, () => {
   logger.info(`Server listening on port : ${port}`);
 });
-
-app.get("/error", (req, res) => {
-  logger.error("Error message");
-  res.sendStatus(500);
-});

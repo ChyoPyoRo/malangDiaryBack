@@ -57,12 +57,12 @@ class authService {
     return { user, accesstoken };
   }
 
-  static async getCurrentUser(userId: string) {
+  static async getCurrentUser(userId: number) {
     const data: user | null = await authRepository.findByUserId(userId);
     return data;
   }
 
-  static async editPW(userId: string, password: string, newPassword: string) {
+  static async editPW(userId: number, password: string, newPassword: string) {
     //🟪 user type으로 가면 비밀번호가 계속 null이라서 bcrypt에 사용이 안된다.
     const user: any = await authRepository.findByUserId(userId);
     let isCorrect = await bcrypt.compare(password, user.password);
@@ -92,7 +92,7 @@ class authService {
     return profile;
   }
 
-  static async editDescription(userId: string, description: string) {
+  static async editDescription(userId: number, description: string) {
     const editData: user = await authRepository.updateUserDescription(
       userId,
       description
@@ -100,19 +100,19 @@ class authService {
     return editData;
   }
 
-  static async editname(userId: string, name: string) {
+  static async editname(userId: number, name: string) {
     const editData: user = await authRepository.updateUserName(userId, name);
     return editData;
   }
 
-  static async editemotion(userId: string, emotion: string) {
+  static async editemotion(userId: number, emotion: string) {
     const editData: user = await authRepository.updateUserEmotion(
       userId,
       emotion
     );
     return editData;
   }
-  static async editWithdrawal(userId: string) {
+  static async editWithdrawal(userId: number) {
     const editData: user = await authRepository.updateWithdrawal(userId);
     return editData;
   }

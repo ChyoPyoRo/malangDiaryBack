@@ -120,7 +120,7 @@ authRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       //🟪🟪🟪 type 에러 =>>> const userId: string | string[] | undefined 3가지 타입에 해당한다
-      const userId: string = req.body["currentUserId"];
+      const userId: number = req.body["currentUserId"];
       // console.log(userId);
 
       // const userId: string = req.body.currentUserId!;
@@ -139,7 +139,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: string = req.body["currentUserId"];
+      const userId: number = req.body["currentUserId"];
       type obj = {
         password: "string";
         newPassword: "string";
@@ -162,7 +162,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: string = req.body["currentUserId"];
+      const userId: number = req.body["currentUserId"];
       const description: string = req.body.description;
 
       const editResult = await authService.editDescription(userId, description);
@@ -177,7 +177,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: string = req.body["currentUserId"];
+      const userId: number = req.body["currentUserId"];
       const name: string = req.body.name;
 
       const editResult = await authService.editname(userId, name);
@@ -192,7 +192,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: string = req.body["currentUserId"];
+      const userId: number = req.body["currentUserId"];
       const emotion: string = req.body.emotion;
 
       const editResult = await authService.editemotion(userId, emotion);
@@ -207,7 +207,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: string = req.body["currentUserId"];
+      const userId: number = req.body["currentUserId"];
 
       const editResult = await authService.editWithdrawal(userId);
       res.status(200).send(editResult);

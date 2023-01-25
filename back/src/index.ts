@@ -2,11 +2,11 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors-ts";
 import { port } from "./configs/configModules";
 import { authRouter } from "./auth/authRouter";
-import { diaryRouter } from "./diary/diaryRouter";
-import { friendRouter } from "./friend/friendRouter";
+// import { diaryRouter } from "./diary/diaryRouter";
+// import { friendRouter } from "./friend/friendRouter";
 import { emotionRouter } from "./emotion/emotionRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
-import { chatRouter } from "./chat/chatRouter";
+// import { chatRouter } from "./chat/chatRouter";
 import { createServer } from "http";
 import { setUpSocket } from "./component/socket";
 import { logger } from "./configs/winston";
@@ -26,9 +26,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", authRouter);
-app.use("/diary", diaryRouter);
-app.use("/chat", chatRouter);
-app.use("/friend", friendRouter);
+// app.use("/diary", diaryRouter);
+// app.use("/chat", chatRouter);
+// app.use("/friend", friendRouter);
 app.use("/emotion", emotionRouter);
 
 const httpServer = createServer(app);

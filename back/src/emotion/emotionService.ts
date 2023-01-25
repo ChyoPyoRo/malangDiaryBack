@@ -1,7 +1,7 @@
 import { emotionRepository } from "./emotionRepository";
 
 class emotionService {
-  static async getEmotion(userId: string, startDate: Date, endDate: Date) {
+  static async getEmotion(userId: number, startDate: Date, endDate: Date) {
     const Startdate = new Date(startDate);
     const Enddate = new Date(endDate);
     const emotionType = [

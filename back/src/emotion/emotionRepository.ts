@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 class emotionRepository {
   static async getEmotions(
-    userId: string,
+    userId: number,
     startDate: Date,
     endDate: Date,
     emotion: string

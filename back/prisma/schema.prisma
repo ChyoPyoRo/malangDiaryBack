@@ -8,7 +8,6 @@ datasource db {
 }
 
 model user {
-  id           Int            @id @unique @default(autoincrement())
   email        String         @db.VarChar(40)
   name         String         @unique @db.VarChar(20)
   password     String         @db.VarChar(60)
@@ -17,6 +16,7 @@ model user {
   updateAt     DateTime       @updatedAt
   withdrawal   Int            @default(0) @db.TinyInt
   emotion      String?        @db.VarChar(20)
+  id           Int            @id @unique @default(autoincrement())
   diary        Diary[]
   diaryAnswer  DiaryAnswer[]
   emotionData  EmotionData[]
@@ -93,8 +93,8 @@ model standByFriend {
 }
 
 model Friend {
-  followerId  Int
-  followingId Int
+  followerId  Int  @map("FK_followerId")
+  followingId Int  @map("FK_followingId")
   follower    user @relation("follower", fields: [followerId], references: [id])
   following   user @relation("following", fields: [followingId], references: [id])
 
@@ -122,10 +122,13 @@ model EmotionData {
 }
 
 model DiaryAnswer {
-  PK_diaryAnswer Int           @id @unique @default(autoincrement())
+  id             Int           @id @unique @default(autoincrement()) @map("PK_diaryAnswer")
   questionNumber Int           @map("FK_questionNumber")
   userId         Int           @map("FK_userId")
-  diaryQuestion  DiaryQuestion @relation(fields: [questionNumber], references: [PK_diaryQuestion])
+  createAt       DateTime      @default(now())
+  updateAt       DateTime      @updatedAt
+  content        String        @db.VarChar(600)
+  diaryQuestion  DiaryQuestion @relation(fields: [questionNumber], references: [id])
   user           user          @relation(fields: [userId], references: [id])
 
   @@index([questionNumber], map: "diaryAnswer_FK_questionNumber_fkey")
@@ -133,7 +136,7 @@ model DiaryAnswer {
 }
 
 model DiaryQuestion {
-  PK_diaryQuestion Int           @id @unique @default(autoincrement())
-  question         String        @db.VarChar(80)
-  diaryAnswer      DiaryAnswer[]
+  id          Int           @id @unique @default(autoincrement()) @map("PK_diaryQuestion")
+  question    String        @db.VarChar(80)
+  diaryAnswer DiaryAnswer[]
 }

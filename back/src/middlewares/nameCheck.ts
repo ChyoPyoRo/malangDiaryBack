@@ -5,7 +5,7 @@ async function nameCheck(userId: string) {
   if (!userId) {
     return null;
   }
-  const userData = await authRepository.findByUserId(userId);
+  const userData = await authRepository.findByUserId(Number(userId));
   return userData;
 }
 

@@ -2,9 +2,9 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors-ts";
 import { port } from "./configs/configModules";
 import { authRouter } from "./auth/authRouter";
-// import { diaryRouter } from "./diary/diaryRouter";
+import { diaryRouter } from "./diary/diaryRouter";
 // import { friendRouter } from "./friend/friendRouter";
-import { emotionRouter } from "./emotion/emotionRouter";
+// import { emotionRouter } from "./emotion/emotionRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 // import { chatRouter } from "./chat/chatRouter";
 import { QnARouter } from "./QnA/QnARouter";
@@ -27,10 +27,10 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", authRouter);
-// app.use("/diary", diaryRouter);
+app.use("/diary", diaryRouter);
 // app.use("/chat", chatRouter);
 // app.use("/friend", friendRouter);
-app.use("/emotion", emotionRouter);
+// app.use("/emotion", emotionRouter);
 app.use("/QnA", QnARouter);
 
 const httpServer = createServer(app);

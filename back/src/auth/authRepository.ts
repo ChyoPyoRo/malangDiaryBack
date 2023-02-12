@@ -3,11 +3,24 @@ const prisma = new PrismaClient();
 
 class authRepository {
   static async signUpUser(email: string, name: string, hashpassword: string) {
+    const friendTempid: number = 1;
     const newUser = await prisma.user.create({
       data: {
         email: email,
         password: hashpassword,
         name: name,
+        //
+        // TODO: 친구 연결하기
+        // followers: {
+        //   connect: {
+        //     followerId: friendTempid,
+        //   },
+        // },
+        // following: {
+        //   connect: {
+        //     followingId: friendTempid,
+        //   },
+        // },
       },
       // include: {
       //   refreshToken: true,

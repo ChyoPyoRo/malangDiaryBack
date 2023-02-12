@@ -84,8 +84,8 @@ model chatRoom {
 }
 
 model standByFriend {
-  requester        String
-  respondent       String   @db.VarChar(40)
+  requester        Int
+  respondent       Int
   relationship     Int      @default(0) @db.TinyInt
   createAt         DateTime @default(now())
   PK_standByFriend Int      @id @unique @default(autoincrement())

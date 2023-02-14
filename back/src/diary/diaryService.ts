@@ -62,7 +62,7 @@ class diaryService {
   // 내 다이어리
   static async getMyList(userId: string, page: number) {
     const List: any = await diaryRepository.getMyDiary(userId, page);
-    const userID: string = List.data[0].userId;
+    const userID: number = List.data[0].userId;
     const user = await nameCheck(userID);
     List["userName"] = user?.name;
     return List;
@@ -98,7 +98,7 @@ class diaryService {
     const otherId: any = otherUser?.id;
     const List: any = await diaryRepository.getAllScope(otherId, page);
 
-    const userID: string = List.data[0]?.userId;
+    const userID: number = List.data[0]?.userId;
     const user = await nameCheck(userID);
 
     List["userName"] = user?.name;
@@ -153,7 +153,7 @@ class diaryService {
 
   static async findOne(postId: number) {
     const one: any = await diaryRepository.getDiaryOne(postId);
-    const userID: string = one.userId;
+    const userID: number = one.userId;
     const user = await nameCheck(userID);
     return { userName: user?.name, diary: one };
   }

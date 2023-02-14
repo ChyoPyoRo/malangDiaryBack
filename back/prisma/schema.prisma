@@ -20,8 +20,7 @@ model user {
   diary        Diary[]
   diaryAnswer  DiaryAnswer[]
   emotionData  EmotionData[]
-  following    Friend[]       @relation("follower")
-  followers    Friend[]       @relation("following")
+  friend       friend[]
   message      message[]
   refreshToken refreshToken[]
 }
@@ -91,14 +90,13 @@ model standByFriend {
   PK_standByFriend Int      @id @unique @default(autoincrement())
 }
 
-model Friend {
-  followerId  Int  @map("FK_followerId")
-  followingId Int  @map("FK_followingId")
-  follower    user @relation("follower", fields: [followerId], references: [id])
-  following   user @relation("following", fields: [followingId], references: [id])
+model friend {
+  id       Int  @id @unique @default(autoincrement())
+  friendId Int
+  userId   Int
+  user     user @relation(fields: [friendId], references: [id])
 
-  @@id([followerId, followingId])
-  @@index([followingId], map: "Friend_followingId_fkey")
+  @@index([friendId], map: "friend_friendId_fkey")
 }
 
 model refreshToken {

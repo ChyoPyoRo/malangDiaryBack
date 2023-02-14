@@ -1,47 +1,57 @@
-import { PrismaClient } from "@prisma/client";
+import { friend, PrismaClient } from "@prisma/client";
 import { userInfo } from "os";
 const prisma = new PrismaClient();
+import {
+  friendDTO,
+  standByFriend,
+  standByFriendDTO,
+} from "./interface/friendInterface";
 
 class friendRepository {
-  static async makeRequestOnDB(requester: number, respondent: number) {
+  static async makeRequestOnDB(standByFriendDTO: standByFriend) {
     //승인대기 0, 수락1, 거절2, 취소됨3
     const newRequest = await prisma.standByFriend.create({
       data: {
-        requester: requester,
-        respondent: respondent,
+        requester: standByFriendDTO.requester,
+        respondent: standByFriendDTO.respondent,
         relationship: 0,
       },
     });
     return newRequest;
   }
 
-  static async checkRequest(requester: number, respondent: number) {
-    const checkFristRequest = await prisma.standByFriend.findFirst({
+  static async checkRequest(standByFriendDTO: Partial<standByFriendDTO>) {
+    const currentUserRequest = await prisma.standByFriend.findFirst({
       where: {
-        requester: requester,
-        respondent: respondent,
-        /*'{ requester: string; }' 형식은 'standByFriendWhereUniqueInput' 형식에 할당할 수 없습니다.
-  개체 리터럴은 알려진 속성만 지정할 수 있으며 'standByFriendWhereUniqueInput' 형식에 'requester'이(가) 없습니다.
-  findUnique로 하니까 에러 발생 > 일단 findMany로 함
-  근데 many로 반환하니까 null값 탐색이 안되서 그냥 findFirst로 함
-  */
+        requester: standByFriendDTO.requester,
+        respondent: standByFriendDTO.respondent,
       },
     });
-    return checkFristRequest;
+    const respondentRequest = await prisma.standByFriend.findFirst({
+      where: {
+        requester: standByFriendDTO.respondent,
+        respondent: standByFriendDTO.requester,
+      },
+    });
+
+    return { currentUserRequest, respondentRequest };
   }
-  static async checkRequestById(id: number) {
+  static async checkRequestById(standByFriendDTO: Partial<standByFriendDTO>) {
     const checkRequest = await prisma.standByFriend.findFirst({
       where: {
-        PK_standByFriend: id,
+        PK_standByFriend: standByFriendDTO.PK_standByFriend,
       },
     });
     return checkRequest;
   }
   //다른 요청도 처리하기 위해서 아이디로 찾고 관계만 받기
-  static async changeRequest(id: number, relationship: number) {
+  static async changeRequest(
+    data: Partial<standByFriendDTO>,
+    relationship: number
+  ) {
     const changeRequest = await prisma.standByFriend.update({
       where: {
-        PK_standByFriend: id,
+        PK_standByFriend: data.PK_standByFriend,
       },
       data: {
         relationship: relationship,
@@ -50,103 +60,87 @@ class friendRepository {
     return changeRequest;
   }
 
-  static async readWaitResponse(respondent: string) {
+  static async readWaitResponse(respondent: Partial<friend>) {
     const result = await prisma.standByFriend.findMany({
       where: {
         respondent: Number(respondent),
         relationship: 0,
       },
     });
+    console.log("repo", result);
     return result;
   }
-  static async readAcceptRequest(requester: string) {
+  static async readAcceptRequest(requester: Partial<friend>) {
     const result = await prisma.standByFriend.findMany({
       where: {
         requester: Number(requester),
         relationship: 1,
       },
     });
+    console.log("repo", result);
+
     return result;
   }
 
   //   TODO: freind 외래키 수정됨에 따라 관련 로직 수정해야함
-  // 🔳  follower: 본인을 팔로우하는 사람 (친구신청 응답자)
-  // 🔳  following: 내가 팔로우하는 사람 (친구신청 요청자)
-  static async makeFriend(requester: number, respondent: number) {
+  static async makeFriend(standByFriendDTO: standByFriendDTO) {
     const resultOne: object = await prisma.friend.create({
       data: {
-        followerId: {
+        userId: standByFriendDTO.requester,
+        user: {
           connect: {
-            id: respondent,
-          },
-        },
-        followingId: {
-          connect: {
-            id: requester,
+            id: standByFriendDTO.respondent,
           },
         },
       },
     });
-    const addFriend1 = await prisma.user.update({
-      where: {
-        id: requester,
-      },
+    const resultTwo: object = await prisma.friend.create({
       data: {
-        followers: {
-          connect: { followerId: requester, follwingId: respondent },
+        userId: standByFriendDTO.respondent,
+        user: {
+          connect: {
+            id: standByFriendDTO.requester,
+          },
         },
       },
     });
-    const addFriend2 = await prisma.user.update({
-      where: {
-        id: respondent,
-      },
-      data: {
-        following: {
-          connect: { followerId: respondent, follwingId: requester },
-        },
-      },
-    });
-
-    // const resultTwo: object = await prisma.friend.create({
-    //   data: {
-    //     followingId: respondent,
-    //     user: {
-    //       connect: {
-    //         id: requester,
-    //       },
-    //     },
-    //   },
-    // });
-    // console.log(resultOne, resultTwo);
+    console.log(resultOne, resultTwo);
     return 0;
   }
 
-  static async findFriend(userId: number) {
+  static async findFriend(userId: Partial<friend>) {
     const result = await prisma.friend.findMany({
       where: {
-        userId: userId,
+        userId: Number(userId),
       },
     });
     return result;
   }
-  static async findOneFriend(userId: number, friendId: number) {
+  static async findOneFriend(friendDTO: Partial<friend>) {
     const result = await prisma.friend.findMany({
       where: {
-        userId: userId,
-        friendId: friendId,
+        userId: friendDTO.userId,
+        friendId: friendDTO.friendId,
       },
     });
     return result;
   }
 
-  static async deleteFriend(id: number) {
-    const result = await prisma.friend.delete({
+  static async deleteFriend(existId: Pick<friendDTO, "friendId" | "userId">) {
+    const firstValue = await prisma.friend.deleteMany({
       where: {
-        id: id,
+        userId: existId.friendId,
+        friendId: existId.userId,
       },
     });
-    return result;
+    const secondValue = await prisma.friend.deleteMany({
+      where: {
+        userId: existId.userId,
+        friendId: existId.friendId,
+      },
+    });
+
+    return;
   }
 }
 

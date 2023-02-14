@@ -1,6 +1,6 @@
 import { authRepository } from "../auth/authRepository";
 
-async function nameCheck(userId: string) {
+async function nameCheck(userId: number) {
   console.log("nameCheck : ", userId);
   if (!userId) {
     return null;

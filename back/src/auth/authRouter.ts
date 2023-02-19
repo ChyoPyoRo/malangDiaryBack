@@ -121,7 +121,8 @@ authRouter.get(
     try {
       //🟪🟪🟪 type 에러 =>>> const userId: string | string[] | undefined 3가지 타입에 해당한다
       const userId: number = req.body["currentUserId"];
-      // console.log(userId);
+      console.log(userId);
+      console.log(req.body);
 
       // const userId: string = req.body.currentUserId!;
       // const userId = "8ee8758b-c680-4d06-a3f3-945ae7a9e8a5";

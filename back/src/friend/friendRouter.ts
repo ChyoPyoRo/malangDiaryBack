@@ -174,7 +174,7 @@ friendRouter.delete(
           friendDTO,
           existId
         );
-        res.status(201).send(deletedFriend);
+        res.status(201).send({ message: "친구 삭제가 완료되었습니다." });
       }
     } catch (error) {
       next(error);

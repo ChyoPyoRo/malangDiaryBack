@@ -7,6 +7,8 @@ import { emotion, Scope } from "../utils/Types";
 
 class diaryRepository {
   static async post(userId: string, data: any, emotion: emotion) {
+    console.log("userId", userId);
+
     const diary = await prisma.diary.create({
       data: {
         title: data.title,
@@ -14,28 +16,28 @@ class diaryRepository {
         subTitle: data.subTitle,
         scope: data.scope,
         userName: data.userName,
-        // img: data?.location,
+        img: data?.img,
         user: {
           connect: { id: Number(userId) },
         },
       },
     });
 
-    const emotionData = await prisma.diaryEmotion.create({
-      data: {
-        Excited: emotion.Excited,
-        Comfort: emotion.Comfort,
-        Confidence: emotion.Confidence,
-        thanks: emotion.Confidence,
-        Sadness: emotion.Sadness,
-        Anger: emotion.Anger,
-        Anxiety: emotion.Anxiety,
-        hurt: emotion.hurt,
-        diary: {
-          connect: { PK_diary: diary.PK_diary },
-        },
-      },
-    });
+    // const emotionData = await prisma.diaryEmotion.create({
+    //   data: {
+    //     Excited: emotion.Excited,
+    //     Comfort: emotion.Comfort,
+    //     Confidence: emotion.Confidence,
+    //     thanks: emotion.Confidence,
+    //     Sadness: emotion.Sadness,
+    //     Anger: emotion.Anger,
+    //     Anxiety: emotion.Anxiety,
+    //     hurt: emotion.hurt,
+    //     diary: {
+    //       connect: { PK_diary: diary.PK_diary },
+    //     },
+    //   },
+    // });
     return diary;
   }
 
@@ -100,23 +102,23 @@ class diaryRepository {
     return resultObject;
   }
   // TODO: 친구 scope 설정 관련해서 친구를 조회해야함 -> 친구 먼저 해결하긴 해야할 듯 🟢
-  //   static async getFriendId(userId: string) {
-  //     const diaryfriend = await prisma.friend.findMany({
-  //       where: { userId: userId },
-  //       select: {
-  //         friendId: true,
-  //       },
-  //     });
-  //     return diaryfriend;
-  //   }
+  static async getFriendId(userId: string) {
+    const diaryfriend = await prisma.friend.findMany({
+      where: { userId: Number(userId) },
+      select: {
+        friendId: true,
+      },
+    });
+    return diaryfriend;
+  }
   //   // TODO: 친구 scope 설정 관련해서 친구를 조회해야함 -> 친구 먼저 해결하긴 해야할 듯 🟢
-  //   static async FriendId(userId: string, friendId: string) {
-  //     const diaryfriend = await prisma.friend.findMany({
-  //       where: { userId: Number(userId), friendId: friendId },
-  //     });
+  static async FriendId(userId: string, friendId: string) {
+    const diaryfriend = await prisma.friend.findMany({
+      where: { userId: Number(userId), friendId: Number(friendId) },
+    });
 
-  //     return diaryfriend;
-  //   }
+    return diaryfriend;
+  }
   // 유저 다이어리 친구스코프
   static async getFriendScope(otherId: string, page: number) {
     const diary = await prisma.diary.findMany({

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model user {
-  id           String         @id @unique @default(uuid())
+  id           Int            @id @unique @default(autoincrement())
   email        String         @db.VarChar(40)
   name         String         @unique @db.VarChar(20)
   password     String         @db.VarChar(60)
@@ -17,8 +17,9 @@ model user {
   updateAt     DateTime       @updatedAt
   withdrawal   Int            @default(0) @db.TinyInt
   emotion      String?        @db.VarChar(20)
-  diary        diary[]
-  emotionData  emotionData[]
+  diary        Diary[]
+  diaryAnswer  DiaryAnswer[]
+  emotionData  EmotionData[]
   friend       friend[]
   message      message[]
   refreshToken refreshToken[]
@@ -30,26 +31,39 @@ model emailAuthentication {
   CertiNumber Int
 }
 
-model diary {
-  id       Int      @id @unique @default(autoincrement())
-  userId   String
-  img      String?  @db.VarChar(200)
-  content  String   @db.VarChar(1000)
-  emotion  String?  @db.VarChar(20)
-  scope    String   @db.VarChar(10)
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  title    String   @db.VarChar(40)
-  subTitle String?  @db.VarChar(40)
-  encode   String?  @db.VarChar(14000)
-  user     user     @relation(fields: [userId], references: [id])
+model Diary {
+  PK_diary     Int           @id @unique @default(autoincrement())
+  img          String?       @db.VarChar(200)
+  content      String        @db.VarChar(1000)
+  scope        String        @db.VarChar(10)
+  createAt     DateTime      @default(now())
+  updateAt     DateTime      @updatedAt
+  title        String        @db.VarChar(40)
+  subTitle     String?       @db.VarChar(40)
+  userId       Int           @map("FK_userId")
+  imgName      String?
+  user         user          @relation(fields: [userId], references: [id])
+  diaryEmotion diaryEmotion?
 
   @@index([userId], map: "diary_userId_fkey")
 }
 
+model diaryEmotion {
+  Excited    Float
+  Comfort    Float
+  Confidence Float
+  thanks     Float
+  Sadness    Float
+  Anger      Float
+  Anxiety    Float
+  hurt       Float
+  diaryId    Int   @unique @map("FK_diaryId")
+  diary      Diary @relation(fields: [diaryId], references: [PK_diary])
+}
+
 model message {
   id       String   @id @unique @default(uuid())
-  userId   String
+  userId   Int
   text     String   @db.VarChar(200)
   createAt DateTime @default(now())
   room     String
@@ -69,18 +83,18 @@ model chatRoom {
 }
 
 model standByFriend {
-  id           String   @id @unique @default(uuid())
-  requester    String
-  respondent   String   @db.VarChar(40)
-  relationship Int      @default(0) @db.TinyInt
-  createAt     DateTime @default(now())
+  requester        Int
+  respondent       Int
+  relationship     Int      @default(0) @db.TinyInt
+  createAt         DateTime @default(now())
+  PK_standByFriend Int      @id @unique @default(autoincrement())
 }
 
 model friend {
-  id       String @id @unique @default(uuid())
-  friendId String
-  userId   String @db.VarChar(40)
-  user     user   @relation(fields: [friendId], references: [id])
+  id       Int  @id @unique @default(autoincrement())
+  friendId Int
+  userId   Int
+  user     user @relation(fields: [friendId], references: [id])
 
   @@index([friendId], map: "friend_friendId_fkey")
 }
@@ -88,26 +102,38 @@ model friend {
 model refreshToken {
   id           String @id @unique @default(uuid())
   refreshToken String @db.VarChar(500)
-  userId       String
+  userId       Int
   user         user   @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "refreshToken_userId_fkey")
 }
 
-model emotionData {
-  id       String   @id @unique @default(uuid())
-  userId   String
-  emotion  String   @db.VarChar(20)
-  createAt DateTime @default(now())
-  user     user     @relation(fields: [userId], references: [id])
+model EmotionData {
+  emotion        String   @db.VarChar(20)
+  createAt       DateTime @default(now())
+  PK_emotionData Int      @id @unique @default(autoincrement())
+  userId         Int      @map("FK_userId")
+  user           user     @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "emotionData_userId_fkey")
 }
 
-model sim {
-  id          Int @id @unique @default(autoincrement())
-  currentPost Int
-  one         Int
-  two         Int
-  three       Int
+model DiaryAnswer {
+  id             Int           @id @unique @default(autoincrement()) @map("PK_diaryAnswer")
+  questionNumber Int           @map("FK_questionNumber")
+  userId         Int           @map("FK_userId")
+  content        String        @db.VarChar(600)
+  createAt       DateTime      @default(now())
+  updateAt       DateTime      @updatedAt
+  diaryQuestion  DiaryQuestion @relation(fields: [questionNumber], references: [id])
+  user           user          @relation(fields: [userId], references: [id])
+
+  @@index([questionNumber], map: "diaryAnswer_FK_questionNumber_fkey")
+  @@index([userId], map: "diaryAnswer_FK_userId_fkey")
+}
+
+model DiaryQuestion {
+  id          Int           @id @unique @default(autoincrement()) @map("PK_diaryQuestion")
+  question    String        @db.VarChar(80)
+  diaryAnswer DiaryAnswer[]
 }

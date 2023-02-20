@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 class emotionRepository {
   static async getEmotions(
-    userId: string,
+    userId: number,
     startDate: Date,
     endDate: Date,
     emotion: string
@@ -12,24 +12,25 @@ class emotionRepository {
     // console.log(userId, startDate, endDate);
 
     let emotionCount = await prisma.diary.count({
-      where: {
-        userId: userId,
-        emotion: emotion,
-        createAt: {
-          gte: startDate,
-          lte: endDate,
-        },
-      },
-      select: {
-        emotion: true,
-      },
+      //   where: {
+      //     userId: userId,
+      //     emotion: emotion,
+      //     createAt: {
+      //       gte: startDate,
+      //       lte: endDate,
+      //     },
+      //   },
+      //   select: {
+      //     emotion: true,
+      //   },
     });
-    const result = {
-      value: emotion,
-      ...emotionCount,
-    };
+    // const result = {
+    //   value: emotion,
+    //   ...emotionCount,
+    // };
 
-    return result;
+    // return result;
+    return;
   }
 }
 

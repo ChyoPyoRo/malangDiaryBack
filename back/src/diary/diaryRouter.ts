@@ -2,55 +2,46 @@ import { loginRequired } from "../middlewares/loginRequired";
 import Router, { NextFunction, Request, Response } from "express";
 import { diaryService } from "./diaryService";
 import { emotion, Scope } from "../utils/Types";
-// import { upload } from "../middlewares/imageUpload";
-
+import { celebrate, Joi } from "celebrate";
 import exp from "constants";
 import { send } from "process";
+
+import multer from "multer";
+import { uploadFile, deleteFile } from "../middlewares/imageUpload";
+import { diary } from "./interface/diaryInterface";
+import { Diary } from "@prisma/client";
+const upload = multer({ dest: "uploads/" });
 const diaryRouter = Router();
 
 // 다이어리 포스트
 diaryRouter.post(
   "/post/:userName",
+  uploadFile.single("image"),
+  // 이거 없으면 TypeError: Cannot read properties of undefined (reading 'path')
+  // 만약 "image" 와 formdata input key값이 다르면 MulterError: Unexpected field 발생
   loginRequired,
-  // upload.single("image"),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.body["currentUserId"];
-      const { title, subTitle, content } = req.body;
-      const scope: Scope = req.body.scope;
-      // const img = req.file;
-      const data = {
-        title,
-        subTitle,
-        content,
-        scope,
-        // img
-      };
-      console.log(data);
+      const file: any = req.file;
 
-      const post = await diaryService.postingDiary(userId, data);
+      const diaryDTO = {
+        userId: req.body.currentUserId,
+        title: req.body,
+        subTitle: req.body,
+        content: req.body,
+        scope: req.body,
+        userName: req.params,
+        img: file?.location,
+        imgName: file?.key,
+      };
+
+      const post: Diary = await diaryService.postingDiary(diaryDTO);
       res.status(201).send(post);
     } catch (error) {
       next(error);
     }
   }
 );
-
-// diaryRouter.post(
-//   "/test",
-//   upload.single("image"),
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const image = req.file;
-//       // const img = upload.single("image");
-//       console.log("img??", image);
-
-//       res.status(201).send(image);
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
 
 //다이어리 수정
 diaryRouter.patch(
@@ -175,6 +166,7 @@ diaryRouter.get(
   }
 );
 
+// TODO:
 diaryRouter.get(
   "/detail/:postingId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -182,6 +174,7 @@ diaryRouter.get(
       const { postingId } = req.params;
       const postId = Number(postingId);
       const diary = await diaryService.findOne(postId);
+
       res.status(200).send(diary);
     } catch (error) {
       next(error);
@@ -195,24 +188,15 @@ diaryRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const { postingId } = req.params;
     const postId = Number(postingId);
-    await diaryService.DeleteOne(postId);
+    const DeleteData = await diaryService.DeleteOne(postId);
     // send 로 메세지 출력 안됨+ 삭제는 잘 돌아감
+    // console.log(DeleteData, "------data----");
+    // const imgKey = DeleteData.userName;
+    // TODO: S3 이미지 삭제 마무리 하기
+    const imgKey = "1676825899498_0c70ab1c-5db0-4954-b51a-0965d3fe96d8_.jpeg";
+    await deleteFile(imgKey);
+
     res.status(204).send("Deleted successfully.");
-  }
-);
-
-diaryRouter.get(
-  "/SimList/:diaryId",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { diaryId } = req.params;
-      const postId = Number(diaryId);
-
-      const result = await diaryService.findSim(postId);
-      res.status(200).send(result);
-    } catch (error) {
-      next(error);
-    }
   }
 );
 

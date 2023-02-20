@@ -4,11 +4,13 @@ import { port } from "./configs/configModules";
 import { authRouter } from "./auth/authRouter";
 import { diaryRouter } from "./diary/diaryRouter";
 import { friendRouter } from "./friend/friendRouter";
-import { emotionRouter } from "./emotion/emotionRouter";
+// import { emotionRouter } from "./emotion/emotionRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
-import { chatRouter } from "./chat/chatRouter";
+// import { chatRouter } from "./chat/chatRouter";
+import { QnARouter } from "./QnA/QnARouter";
 import { createServer } from "http";
 import { setUpSocket } from "./component/socket";
+import { logger } from "./configs/winston";
 
 const app: express.Application = express();
 app.use(
@@ -26,14 +28,18 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/users", authRouter);
 app.use("/diary", diaryRouter);
-app.use("/chat", chatRouter);
+// app.use("/chat", chatRouter);
 app.use("/friend", friendRouter);
-app.use("/emotion", emotionRouter);
+// app.use("/emotion", emotionRouter);
+app.use("/QnA", QnARouter);
 
 const httpServer = createServer(app);
 // setUpSocket(httpServer);
 
 app.use(errorMiddleware);
 httpServer.listen(port, () => {
-  console.log(`정상적으로 서버를 시작하였습니다. http://localhost:${port}`);
+  logger.info(`
+  ---------------------------------
+   Server listening on port : ${port} 
+  ---------------------------------`);
 });

@@ -1,36 +1,31 @@
 import { chatService } from "../chat/chatService";
 import { Server } from "socket.io";
-import { loginRequired } from "../middlewares/loginRequired";
-import { JWT_SECRET_KEY } from "../configs/configModules";
-import Jwt, { Secret, JwtPayload } from "jsonwebtoken";
-import { Response } from "express";
-
 function setUpSocket(httpServer: object) {
   const chatServer = new Server(httpServer, {}); //추후 옵션 추가
   //모듈로 뺏을 때 위에서 선언된 httpServer를 조회할 방법
   chatServer
     .use((socket, next) => {
-      try {
+      // try {
         // console.log(socket)
-        const token: any = socket.handshake.auth.token;
-        console.log(token);
+        // const token: any = socket.handshake.auth.token;
+        // console.log(token);
         // if(!token){
-        //   throw new Error('aaaaaaaaaaaaaaaaaaaa')
+          // throw new Error('aaaaaaaaaaaaaaaaaaaa')
         // }
-        const accessToken: string = token;
-        console.log("accessToken : ", accessToken);
-        const secretkey: Secret = JWT_SECRET_KEY;
-        console.log("secretkey : ", secretkey);
-        const jwtDecoded: any = Jwt.verify(accessToken, secretkey);
-        console.log("jwtDecoded : ", jwtDecoded);
-        const userId = jwtDecoded.userId;
-        console.log(userId);
-        socket.handshake.headers.currentUser = userId;
-        next();
-      } catch (error) {
+        // const accessToken: string = token;
+        // console.log("accessToken : ", accessToken);
+        // const secretkey: Secret = JWT_SECRET_KEY;
+        // console.log("secretkey : ", secretkey);
+        // const jwtDecoded: any = Jwt.verify(accessToken, secretkey);
+        // console.log("jwtDecoded : ", jwtDecoded);
+        // const userId = jwtDecoded.userId;
+        // console.log(userId);
+        // socket.handshake.headers.currentUser = userId;
+        // next();
+      // } catch (error) {
         // socket.emit('error', error) > 작동 안함
-        console.log(error);
-      }
+        // console.log(error);
+      // }
     })
     .on("connection", (socket) => {
       console.log(socket.rooms);

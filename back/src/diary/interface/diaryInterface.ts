@@ -1,10 +1,10 @@
 import { diaryEmotion } from "@prisma/client";
 
-export interface diary extends diaryDTO {
+export interface diary extends diaryInterface {
   PK_diary: number;
 }
 
-export interface diaryDTO {
+export interface diaryInterface {
   img?: string;
   imgName?: string;
   content: string;

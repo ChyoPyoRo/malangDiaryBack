@@ -4,10 +4,10 @@ import { number } from "joi";
 import { encode } from "punycode";
 const prisma = new PrismaClient();
 import { emotion, Scope } from "../utils/Types";
-import { diaryDTO } from "./interface/diaryInterface";
+import { diaryInterface } from "./interface/diaryInterface";
 
 class diaryRepository {
-  static async post(diaryDTO: diaryDTO, emotion: emotion) {
+  static async post(diaryDTO: diaryInterface, emotion: emotion) {
     const diary = await prisma.diary.create({
       data: {
         title: diaryDTO.title,

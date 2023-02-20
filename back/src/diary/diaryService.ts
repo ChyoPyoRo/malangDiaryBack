@@ -1,5 +1,5 @@
 import { diaryRepository } from "./diaryRepository";
-import { Diary } from "@prisma/client";
+import { Diary, user } from "@prisma/client";
 import {
   emotionAnalysis,
   // sentenceSimilarity,
@@ -8,11 +8,13 @@ import {
 import { encode } from "querystring";
 import { nameCheck } from "../middlewares/nameCheck";
 import { emotion } from "../utils/Types";
-import { diaryDTO } from "./interface/diaryInterface";
+import { diaryInterface } from "./interface/diaryInterface";
 
 class diaryService {
-  static async postingDiary(diaryDTO: diaryDTO) {
+  static async postingDiary(diaryDTO: diaryInterface) {
     const rawContent = diaryDTO.content;
+    console.log("rawContent", diaryDTO.content);
+    console.log("DTO", diaryDTO);
 
     // content raw data 추출을 위한 정규화 식
     const content = rawContent.replace(
@@ -154,6 +156,7 @@ class diaryService {
     return { userName: user?.name, diary: one };
   }
   //delete
+  // TODO: emotion row도 삭제하기
   static async DeleteOne(postId: number) {
     const data = await diaryRepository.deletepost(postId);
 

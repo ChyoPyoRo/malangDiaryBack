@@ -8,8 +8,9 @@ import { send } from "process";
 
 import multer from "multer";
 import { uploadFile, deleteFile } from "../middlewares/imageUpload";
-import { diary } from "./interface/diaryInterface";
-import { Diary } from "@prisma/client";
+import { diaryInterface } from "./interface/diaryInterface";
+import { Diary, user } from "@prisma/client";
+import { File } from "aws-sdk/clients/codecommit";
 const upload = multer({ dest: "uploads/" });
 const diaryRouter = Router();
 
@@ -23,16 +24,15 @@ diaryRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const file: any = req.file;
-
-      const diaryDTO = {
+      const { userName } = req.params;
+      const diaryDTO: diaryInterface = {
         userId: req.body.currentUserId,
-        title: req.body,
-        subTitle: req.body,
-        content: req.body,
-        scope: req.body,
-        userName: req.params,
-        img: file?.location,
-        imgName: file?.key,
+        title: req.body.title,
+        subTitle: req.body.subTitle,
+        content: req.body.content,
+        scope: req.body.scope,
+        img: file?.location.img,
+        imgName: file?.key.imgName,
       };
 
       const post: Diary = await diaryService.postingDiary(diaryDTO);

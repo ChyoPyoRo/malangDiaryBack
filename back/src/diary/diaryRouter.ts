@@ -6,13 +6,10 @@ import { celebrate, Joi } from "celebrate";
 import exp from "constants";
 import { send } from "process";
 
-import fs from "fs";
-import util from "util";
-const unlinkFile = util.promisify(fs.unlink);
-
 import multer from "multer";
-// import { uploadFile, getFileStream } from "../middlewares/imageUpload";
 import { uploadFile, deleteFile } from "../middlewares/imageUpload";
+import { diary } from "./interface/diaryInterface";
+import { Diary } from "@prisma/client";
 const upload = multer({ dest: "uploads/" });
 const diaryRouter = Router();
 
@@ -25,26 +22,20 @@ diaryRouter.post(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.body.currentUserId;
-      const { title, subTitle, content } = req.body;
-      const scope: Scope = req.body.scope;
-      const { userName } = req.params;
-
       const file: any = req.file;
 
-      const img = file?.location;
-      const imgName = file?.key;
-      const data = {
-        title,
-        subTitle,
-        content,
-        scope,
-        userName,
-        img,
-        imgName,
+      const diaryDTO = {
+        userId: req.body.currentUserId,
+        title: req.body,
+        subTitle: req.body,
+        content: req.body,
+        scope: req.body,
+        userName: req.params,
+        img: file?.location,
+        imgName: file?.key,
       };
 
-      const post = await diaryService.postingDiary(userId, data);
+      const post: Diary = await diaryService.postingDiary(diaryDTO);
       res.status(201).send(post);
     } catch (error) {
       next(error);
@@ -199,8 +190,9 @@ diaryRouter.delete(
     const postId = Number(postingId);
     const DeleteData = await diaryService.DeleteOne(postId);
     // send 로 메세지 출력 안됨+ 삭제는 잘 돌아감
-    console.log(DeleteData, "------data----");
+    // console.log(DeleteData, "------data----");
     // const imgKey = DeleteData.userName;
+    // TODO: S3 이미지 삭제 마무리 하기
     const imgKey = "1676825899498_0c70ab1c-5db0-4954-b51a-0965d3fe96d8_.jpeg";
     await deleteFile(imgKey);
 

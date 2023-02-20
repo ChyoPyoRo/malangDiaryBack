@@ -40,8 +40,8 @@ model Diary {
   updateAt     DateTime      @updatedAt
   title        String        @db.VarChar(40)
   subTitle     String?       @db.VarChar(40)
-  userName     String
   userId       Int           @map("FK_userId")
+  imgName      String?
   user         user          @relation(fields: [userId], references: [id])
   diaryEmotion diaryEmotion?
 

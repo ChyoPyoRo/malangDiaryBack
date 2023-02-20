@@ -8,10 +8,11 @@ import {
 import { encode } from "querystring";
 import { nameCheck } from "../middlewares/nameCheck";
 import { emotion } from "../utils/Types";
+import { diaryDTO } from "./interface/diaryInterface";
 
 class diaryService {
-  static async postingDiary(userId: string, data: any) {
-    const rawContent = data.content;
+  static async postingDiary(diaryDTO: diaryDTO) {
+    const rawContent = diaryDTO.content;
 
     // content raw data 추출을 위한 정규화 식
     const content = rawContent.replace(
@@ -33,11 +34,7 @@ class diaryService {
       hurt: 0.1,
     };
 
-    const postingDiary: Diary = await diaryRepository.post(
-      userId,
-      data,
-      emotion
-    );
+    const postingDiary: Diary = await diaryRepository.post(diaryDTO, emotion);
 
     return postingDiary;
   }

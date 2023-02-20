@@ -4,21 +4,20 @@ import { number } from "joi";
 import { encode } from "punycode";
 const prisma = new PrismaClient();
 import { emotion, Scope } from "../utils/Types";
+import { diaryDTO } from "./interface/diaryInterface";
 
 class diaryRepository {
-  static async post(userId: string, data: any, emotion: emotion) {
-    console.log("userId", userId);
-
+  static async post(diaryDTO: diaryDTO, emotion: emotion) {
     const diary = await prisma.diary.create({
       data: {
-        title: data.title,
-        content: data.content,
-        subTitle: data.subTitle,
-        scope: data.scope,
-        userName: data.userName,
-        img: data?.img,
+        title: diaryDTO.title,
+        content: diaryDTO.content,
+        subTitle: diaryDTO.subTitle,
+        scope: diaryDTO.scope,
+        imgName: diaryDTO?.imgName,
+        img: diaryDTO?.img,
         user: {
-          connect: { id: Number(userId) },
+          connect: { id: Number(diaryDTO.userId) },
         },
       },
     });

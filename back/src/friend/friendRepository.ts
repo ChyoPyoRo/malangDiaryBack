@@ -12,8 +12,8 @@ class friendRepository {
     //승인대기 0, 수락1, 거절2, 취소됨3
     const newRequest = await prisma.standByFriend.create({
       data: {
-        requester: standByFriendDTO.requester,
-        respondent: standByFriendDTO.respondent,
+        requester: standByFriendDTO.respondent,
+        respondent: standByFriendDTO.requester,
         relationship: 0,
       },
     });

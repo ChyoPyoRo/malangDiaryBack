@@ -51,11 +51,16 @@ class friendService {
     const findRequest = await friendRepository.checkRequestById(
       standByFriendDTO
     );
+
+    console.log("11111", findRequest);
+
     if (!findRequest) {
       const message: string = "해당 요청은 존재하지 않습니다";
       throw new Error(message);
     } else {
       if (standByFriendDTO.respondent != findRequest.respondent) {
+        console.log("왜 여기로 올까? ", standByFriendDTO.respondent);
+        console.log("왜 여기로 올까? ", findRequest.respondent);
         const message: string = "권한이 없습니다.";
         throw new Error(message);
       } else {

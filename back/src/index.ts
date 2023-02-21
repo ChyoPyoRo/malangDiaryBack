@@ -6,7 +6,7 @@ import { diaryRouter } from "./diary/diaryRouter";
 import { friendRouter } from "./friend/friendRouter";
 // import { emotionRouter } from "./emotion/emotionRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
-// import { chatRouter } from "./chat/chatRouter";
+import { chatRouter } from "./chat/chatRouter";
 import { QnARouter } from "./QnA/QnARouter";
 import { createServer } from "http";
 import { setUpSocket } from "./component/socket";
@@ -28,13 +28,13 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/users", authRouter);
 app.use("/diary", diaryRouter);
-// app.use("/chat", chatRouter);
+app.use("/chat", chatRouter);
 app.use("/friend", friendRouter);
 // app.use("/emotion", emotionRouter);
 app.use("/QnA", QnARouter);
 
 const httpServer = createServer(app);
-// setUpSocket(httpServer);
+setUpSocket(httpServer);
 
 app.use(errorMiddleware);
 httpServer.listen(port, () => {

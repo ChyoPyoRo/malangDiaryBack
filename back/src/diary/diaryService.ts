@@ -8,7 +8,12 @@ import {
 import { encode } from "querystring";
 import { nameCheck } from "../middlewares/nameCheck";
 import { emotion, emotionType } from "../utils/Types";
-import { diary, diaryInterface } from "./interface/diaryInterface";
+import {
+  diary,
+  diaryInterface,
+  pageInfo,
+  responseObjectForm,
+} from "./interface/diaryInterface";
 
 class diaryService {
   static async postingDiary(diaryDTO: diaryInterface) {
@@ -51,68 +56,77 @@ class diaryService {
   }
 
   // 내 다이어리
-  static async getMyList(userId: string, page: number) {
-    const List: any = await diaryRepository.getMyDiary(userId, page);
+  static async getMyList(pageDTO: pageInfo) {
+    const List: any = await diaryRepository.getMyDiary(pageDTO);
     const userID: number = List.data[0].userId;
     const user = await nameCheck(userID);
     List["userName"] = user?.name;
     return List;
   }
 
-  //   //   FIXME: 친구 관련 🟢 -  조회
-  //   // 특정 유저의 다이어리
-  static async getUserList(userId: string, page: number, otherName: string) {
-    const user: any = await diaryRepository.findByUserName(otherName);
-    const friendId = user?.id;
-    const isFriend = await diaryRepository.FriendId(userId, friendId);
-    const userInfo = await nameCheck(friendId);
+  // 특정 유저의 다이어리
+  static async getUserList(pageDTO: pageInfo) {
+    const user = await diaryRepository.findByUserName(pageDTO);
+    pageDTO = {
+      ...pageDTO,
+      friendId: user?.id,
+    };
+    const isFriend = await diaryRepository.FriendId(pageDTO);
+
+    const userInfo = await nameCheck(pageDTO.friendId!);
     const userName = userInfo?.name;
-    console.log("isFriend?? 왜 넘어갈까ㅣ???", isFriend);
 
     //친구가 있으면 getFriendScope controller
     if (isFriend[0]) {
-      const friendScope: any = await diaryRepository.getFriendScope(
-        friendId,
-        page
-      );
-      friendScope["userName"] = userName;
+      let friendScope: responseObjectForm =
+        await diaryRepository.getFriendScope(pageDTO);
+      friendScope = { ...friendScope, userName };
 
       return friendScope;
     }
 
-    const List: any = await diaryRepository.getAllScope(friendId, page);
-    List["userName"] = userName;
+    let List: responseObjectForm = await diaryRepository.getAllScope(pageDTO);
+    List = {
+      ...List,
+      userName,
+    };
     return List;
-  } //   TODO: 친구 관련 🟢 -  조회
+  }
 
   // 특정 유저 다이어리 비회원
-  static async getnonUserList(page: number, otherUserName: string) {
-    const otherUser = await diaryRepository.findByUserName(otherUserName);
-    const otherId: any = otherUser?.id;
-    const List: any = await diaryRepository.getAllScope(otherId, page);
+  static async getnonUserList(pageDTO: pageInfo) {
+    const otherUser = await diaryRepository.findByUserName(pageDTO);
+    pageDTO = {
+      ...pageDTO,
+      friendId: otherUser?.id,
+    };
+    let List: responseObjectForm = await diaryRepository.getAllScope(pageDTO);
 
-    const userID: number = List.data[0]?.userId;
-    const user = await nameCheck(userID);
+    const user = await nameCheck(List.diary[0]?.userId);
 
-    List["userName"] = user?.name;
+    List = {
+      ...List,
+      userName: user?.name,
+    };
     return List;
   }
 
   //   FIXME:: 친구 관련 🟢
   //   //2수정본 . main- 친구만
-  static async getMainListFr(page: number, userId: string) {
-    const friendIdList = await diaryRepository.getFriendId(userId);
+  static async getMainListFr(pageDTO: pageInfo) {
+    const friendIdList = await diaryRepository.getFriendId(pageDTO);
     const friendId = friendIdList.map((x) => x.friendId);
-    const List = await diaryRepository.getMainDiaryFr(page, friendId);
+    const List = await diaryRepository.getMainDiaryFr(pageDTO, friendId);
     const user = await Promise.all(List.map((x) => nameCheck(x.userId)));
     const userName = user.map((x) => x?.name);
 
     const result = { data: List, userName: userName };
     return result;
   }
+
   //메인 (all+friend 수정본)
-  static async getMainList(page: number, userId: string) {
-    const friendIdList = await diaryRepository.getFriendId(userId);
+  static async getMainList(pageDTO: pageInfo) {
+    const friendIdList = await diaryRepository.getFriendId(pageDTO);
     const friendId = friendIdList.map((x) => x.friendId);
 
     let LoginUsermain = [];
@@ -133,7 +147,7 @@ class diaryService {
     return result;
   }
 
-  //1
+  // 비회원 mainpage
   static async getMainListAll(page: number) {
     const List = await diaryRepository.getMainDiaryAll(page);
     const user = await Promise.all(List.map((x) => nameCheck(x.userId)));
@@ -142,7 +156,6 @@ class diaryService {
 
     return result;
   }
-  // TODO: 친구 관련 🟢
 
   static async findOne(postId: number) {
     const one: any = await diaryRepository.getDiaryOne(postId);
@@ -150,8 +163,9 @@ class diaryService {
     const user = await nameCheck(userID);
     return { userName: user?.name, diary: one };
   }
+
   //delete
-  // TODO: emotion row도 삭제하기
+  // emotion row도 삭제하기 - 보류
   static async DeleteOne(postId: number) {
     const data = await diaryRepository.deletepost(postId);
 
@@ -160,14 +174,3 @@ class diaryService {
 }
 
 export { diaryService };
-
-// const emotion: emotion = {
-//   Excited: 0,
-//   Comfort: 0,
-//   Confidence: 0,
-//   thanks: 1,
-//   Sadness: 0,
-//   Anger: 0,
-//   Anxiety: 0,
-//   hurt: 0,
-// };

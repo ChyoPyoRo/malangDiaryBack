@@ -1,4 +1,5 @@
-import { diaryEmotion } from "@prisma/client";
+import { diaryEmotion, Diary } from "@prisma/client";
+import { int } from "aws-sdk/clients/datapipeline";
 import { emotionType } from "../../utils/Types";
 
 export interface diary extends diaryInterface {
@@ -15,4 +16,17 @@ export interface diaryInterface {
   userId?: number;
   emotion?: emotionType;
   diaryEmotion?: diaryEmotion;
+}
+
+export interface pageInfo {
+  page: number;
+  userId?: number;
+  otherUserName?: string;
+  friendId?: number;
+}
+
+export interface responseObjectForm {
+  diary: Array<Diary>;
+  count?: number;
+  userName?: string;
 }

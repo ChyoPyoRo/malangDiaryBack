@@ -2,14 +2,16 @@ import { PrismaClient } from "@prisma/client";
 import { Diary } from "@prisma/client";
 import { number } from "joi";
 import { encode } from "punycode";
+import { user } from "../utils/Modules";
 const prisma = new PrismaClient();
-import { emotion, Scope } from "../utils/Types";
-import { diaryInterface } from "./interface/diaryInterface";
+import { emotion, Scope, emotionType } from "../utils/Types";
+import { diary, diaryInterface } from "./interface/diaryInterface";
 
 class diaryRepository {
-  static async post(diaryDTO: diaryInterface, emotion: emotion) {
+  static async post(diaryDTO: diaryInterface, emotion: emotionType) {
     const diary = await prisma.diary.create({
       data: {
+        emotion: emotion,
         title: diaryDTO.title,
         content: diaryDTO.content,
         subTitle: diaryDTO.subTitle,
@@ -40,42 +42,48 @@ class diaryRepository {
     return diary;
   }
 
-  static async updateDiary(newData: any, emotion: emotion) {
+  static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
     const updateDiary = await prisma.diary.update({
       where: {
-        PK_diary: Number(newData.id),
+        PK_diary: diaryDTO.PK_diary,
       },
       data: {
-        title: newData.title,
-        content: newData.content,
-        subTitle: newData.subTitle,
-        scope: newData.scope,
+        title: diaryDTO.title,
+        subTitle: diaryDTO.subTitle,
+        content: diaryDTO.content,
+        scope: diaryDTO.scope,
+        imgName: diaryDTO?.imgName,
+        img: diaryDTO?.img,
+        emotion: emotion,
       },
     });
 
-    const emotionData = await prisma.diaryEmotion.update({
-      where: {},
-      data: {
-        Excited: emotion.Excited,
-        Comfort: emotion.Comfort,
-        Confidence: emotion.Confidence,
-        thanks: emotion.Confidence,
-        Sadness: emotion.Sadness,
-        Anger: emotion.Anger,
-        Anxiety: emotion.Anxiety,
-        hurt: emotion.hurt,
-        diary: {
-          connect: { PK_diary: updateDiary.PK_diary },
-        },
-      },
-    });
+    // const emotionData = await prisma.diaryEmotion.update({
+    //   where: {},
+    //   data: {
+    //     Excited: emotion.Excited,
+    //     Comfort: emotion.Comfort,
+    //     Confidence: emotion.Confidence,
+    //     thanks: emotion.Confidence,
+    //     Sadness: emotion.Sadness,
+    //     Anger: emotion.Anger,
+    //     Anxiety: emotion.Anxiety,
+    //     hurt: emotion.hurt,
+    //     diary: {
+    //       connect: { PK_diary: updateDiary.PK_diary },
+    //     },
+    //   },
+    // });
     return updateDiary;
   }
 
-  static async updateUserEmotion(userId: string, emotion: string) {
+  static async updateUserEmotion(
+    diaryDTO: Partial<diaryInterface>,
+    emotion: emotionType
+  ) {
     const editData = await prisma.user.update({
       where: {
-        id: Number(userId),
+        id: diaryDTO.userId,
       },
       data: {
         emotion: emotion,
@@ -205,6 +213,12 @@ class diaryRepository {
 
   //delete
   static async deletepost(postId: number) {
+    // const deleteEmotion = await prisma.diaryEmotion.delete({
+    //   // where:{FK_diary: postId}
+    //   where: {
+    //     diaryId: postId,
+    //   },
+    // });
     const deleteOne = await prisma.diary.delete({
       where: { PK_diary: postId },
     });

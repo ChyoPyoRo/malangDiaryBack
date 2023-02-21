@@ -9,27 +9,27 @@ class emotionRepository {
     endDate: Date,
     emotion: string
   ) {
-    // console.log(userId, startDate, endDate);
+    console.log(userId, startDate, endDate);
 
     let emotionCount = await prisma.diary.count({
-      //   where: {
-      //     userId: userId,
-      //     emotion: emotion,
-      //     createAt: {
-      //       gte: startDate,
-      //       lte: endDate,
-      //     },
-      //   },
-      //   select: {
-      //     emotion: true,
-      //   },
+      where: {
+        userId: userId,
+        emotion: emotion,
+        createAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      select: {
+        emotion: true,
+      },
     });
-    // const result = {
-    //   value: emotion,
-    //   ...emotionCount,
-    // };
+    const result = {
+      value: emotion,
+      ...emotionCount,
+    };
 
-    // return result;
+    return result;
     return;
   }
 }

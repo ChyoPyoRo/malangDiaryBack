@@ -7,56 +7,49 @@ import {
 } from "../middlewares/axios";
 import { encode } from "querystring";
 import { nameCheck } from "../middlewares/nameCheck";
-import { emotion } from "../utils/Types";
-import { diaryInterface } from "./interface/diaryInterface";
+import { emotion, emotionType } from "../utils/Types";
+import { diary, diaryInterface } from "./interface/diaryInterface";
 
 class diaryService {
   static async postingDiary(diaryDTO: diaryInterface) {
     const rawContent = diaryDTO.content;
-    console.log("rawContent", diaryDTO.content);
-    console.log("DTO", diaryDTO);
 
     // content raw data 추출을 위한 정규화 식
-    const content = rawContent.replace(
+    const content = rawContent?.replace(
       /<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/gi,
       ""
     );
     const contentdata = { content: content };
     // 🤖🤖🤖 1. 감정분석 모델   🤖🤖🤖
     // const emotion: any = await emotionAnalysis(contentdata);
-
-    const emotion: emotion = {
-      Excited: 0.1,
-      Comfort: 0.2,
-      Confidence: 0.01,
-      thanks: 0.2,
-      Sadness: 0.3,
-      Anger: 0.1,
-      Anxiety: 0.1,
-      hurt: 0.1,
-    };
+    const emotion: emotionType = "편안한";
 
     const postingDiary: Diary = await diaryRepository.post(diaryDTO, emotion);
 
     return postingDiary;
   }
 
-  static async modifyDiary(userId: string, newData: any) {
+  static async modifyDiary(diaryDTO: Partial<diary>) {
     // 🤖🤖🤖 1. 감정분석 모델   🤖🤖🤖
     // 모델 output 값 = 감정
-    const content = newData.content.replace(
+    const content = diaryDTO.content?.replace(
       /<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/gi,
       ""
     );
     const contentdata = { content: content };
-    const emotion: any = await emotionAnalysis(contentdata);
-    await diaryRepository.updateUserEmotion(userId, emotion);
+    // const emotion: any = await emotionAnalysis(contentdata);
+    const emotionAnalysis: emotionType = "감사한";
+    const emotion: emotionType = diaryDTO.emotion
+      ? diaryDTO.emotion
+      : emotionAnalysis;
+    await diaryRepository.updateUserEmotion(diaryDTO, emotion);
     const modifyDiary: Diary = await diaryRepository.updateDiary(
-      newData,
+      diaryDTO,
       emotion
     );
     return modifyDiary;
   }
+
   // 내 다이어리
   static async getMyList(userId: string, page: number) {
     const List: any = await diaryRepository.getMyDiary(userId, page);
@@ -65,6 +58,7 @@ class diaryService {
     List["userName"] = user?.name;
     return List;
   }
+
   //   //   FIXME: 친구 관련 🟢 -  조회
   //   // 특정 유저의 다이어리
   static async getUserList(userId: string, page: number, otherName: string) {
@@ -73,6 +67,7 @@ class diaryService {
     const isFriend = await diaryRepository.FriendId(userId, friendId);
     const userInfo = await nameCheck(friendId);
     const userName = userInfo?.name;
+    console.log("isFriend?? 왜 넘어갈까ㅣ???", isFriend);
 
     //친구가 있으면 getFriendScope controller
     if (isFriend[0]) {
@@ -165,3 +160,14 @@ class diaryService {
 }
 
 export { diaryService };
+
+// const emotion: emotion = {
+//   Excited: 0,
+//   Comfort: 0,
+//   Confidence: 0,
+//   thanks: 1,
+//   Sadness: 0,
+//   Anger: 0,
+//   Anxiety: 0,
+//   hurt: 0,
+// };

@@ -42,6 +42,7 @@ model Diary {
   subTitle     String?       @db.VarChar(40)
   userId       Int           @map("FK_userId")
   imgName      String?
+  emotion      String        @db.VarChar(10)
   user         user          @relation(fields: [userId], references: [id])
   diaryEmotion diaryEmotion?
 
@@ -49,14 +50,14 @@ model Diary {
 }
 
 model diaryEmotion {
-  Excited    Float
-  Comfort    Float
-  Confidence Float
-  thanks     Float
-  Sadness    Float
-  Anger      Float
-  Anxiety    Float
-  hurt       Float
+  Excited    Float @default(0)
+  Comfort    Float @default(0)
+  Confidence Float @default(0)
+  thanks     Float @default(0)
+  Sadness    Float @default(0)
+  Anger      Float @default(0)
+  Anxiety    Float @default(0)
+  hurt       Float @default(0)
   diaryId    Int   @unique @map("FK_diaryId")
   diary      Diary @relation(fields: [diaryId], references: [PK_diary])
 }

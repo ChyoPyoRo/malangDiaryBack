@@ -8,7 +8,7 @@ import { send } from "process";
 
 import multer from "multer";
 import { uploadFile, deleteFile } from "../middlewares/imageUpload";
-import { diaryInterface } from "./interface/diaryInterface";
+import { diary, diaryInterface } from "./interface/diaryInterface";
 import { Diary, user } from "@prisma/client";
 import { File } from "aws-sdk/clients/codecommit";
 const upload = multer({ dest: "uploads/" });
@@ -24,15 +24,14 @@ diaryRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const file: any = req.file;
-      const { userName } = req.params;
       const diaryDTO: diaryInterface = {
         userId: req.body.currentUserId,
         title: req.body.title,
         subTitle: req.body.subTitle,
         content: req.body.content,
         scope: req.body.scope,
-        img: file?.location.img,
-        imgName: file?.key.imgName,
+        img: file?.location,
+        imgName: file?.key,
       };
 
       const post: Diary = await diaryService.postingDiary(diaryDTO);
@@ -46,13 +45,23 @@ diaryRouter.post(
 //다이어리 수정
 diaryRouter.patch(
   "/modification",
+  uploadFile.single("image"),
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newData = req.body;
-      const userId = req.body["currentUserId"];
-
-      const modification = await diaryService.modifyDiary(userId, newData);
+      const file: any = req.file;
+      const diaryDTO: Partial<diary> = {
+        userId: req.body.currentUserId,
+        PK_diary: req.body.PK_diary,
+        title: req.body.title,
+        subTitle: req.body.subTitle,
+        content: req.body.content,
+        scope: req.body.scope,
+        img: file?.location,
+        imgName: file?.key,
+        emotion: req.body.emotion,
+      };
+      const modification = await diaryService.modifyDiary(diaryDTO);
 
       res.status(201).send(modification);
     } catch (error) {
@@ -190,11 +199,9 @@ diaryRouter.delete(
     const postId = Number(postingId);
     const DeleteData = await diaryService.DeleteOne(postId);
     // send 로 메세지 출력 안됨+ 삭제는 잘 돌아감
-    // console.log(DeleteData, "------data----");
-    // const imgKey = DeleteData.userName;
+
     // TODO: S3 이미지 삭제 마무리 하기
-    const imgKey = "1676825899498_0c70ab1c-5db0-4954-b51a-0965d3fe96d8_.jpeg";
-    await deleteFile(imgKey);
+    await deleteFile(DeleteData.imgName);
 
     res.status(204).send("Deleted successfully.");
   }

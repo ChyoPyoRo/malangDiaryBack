@@ -8,8 +8,9 @@ import { send } from "process";
 
 import multer from "multer";
 import { uploadFile, deleteFile } from "../middlewares/imageUpload";
-import { diary } from "./interface/diaryInterface";
-import { Diary } from "@prisma/client";
+import { diary, diaryInterface, pageInfo } from "./interface/diaryInterface";
+import { Diary, user } from "@prisma/client";
+import { File } from "aws-sdk/clients/codecommit";
 const upload = multer({ dest: "uploads/" });
 const diaryRouter = Router();
 
@@ -23,14 +24,12 @@ diaryRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const file: any = req.file;
-
-      const diaryDTO = {
+      const diaryDTO: diaryInterface = {
         userId: req.body.currentUserId,
-        title: req.body,
-        subTitle: req.body,
-        content: req.body,
-        scope: req.body,
-        userName: req.params,
+        title: req.body.title,
+        subTitle: req.body.subTitle,
+        content: req.body.content,
+        scope: req.body.scope,
         img: file?.location,
         imgName: file?.key,
       };
@@ -46,13 +45,23 @@ diaryRouter.post(
 //다이어리 수정
 diaryRouter.patch(
   "/modification",
+  uploadFile.single("image"),
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newData = req.body;
-      const userId = req.body["currentUserId"];
-
-      const modification = await diaryService.modifyDiary(userId, newData);
+      const file: any = req.file;
+      const diaryDTO: Partial<diary> = {
+        userId: req.body.currentUserId,
+        PK_diary: req.body.PK_diary,
+        title: req.body.title,
+        subTitle: req.body.subTitle,
+        content: req.body.content,
+        scope: req.body.scope,
+        img: file?.location,
+        imgName: file?.key,
+        emotion: req.body.emotion,
+      };
+      const modification = await diaryService.modifyDiary(diaryDTO);
 
       res.status(201).send(modification);
     } catch (error) {
@@ -63,16 +72,16 @@ diaryRouter.patch(
 
 //회원) 본인 일기장
 diaryRouter.get(
-  "/myList/:pageparams",
+  "/myList/:page",
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageparams } = req.params;
-      const page: number = Number(pageparams);
-      const userId = req.body["currentUserId"];
+      const pageDTO: pageInfo = {
+        page: Number(req.params.page),
+        userId: req.body.currentUserId,
+      };
 
-      const List = await diaryService.getMyList(userId, page);
-      // console.log("왜 조회 안함?", List);
+      const List = await diaryService.getMyList(pageDTO);
 
       res.status(200).send(List);
     } catch (error) {
@@ -83,17 +92,17 @@ diaryRouter.get(
 
 //회원) 다른 회원 일기장 id ==> name
 diaryRouter.get(
-  "/UserList/:otherName/:pageparams",
+  "/UserList/:otherName/:page",
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageparams } = req.params;
-      const page: number = Number(pageparams);
+      const pageDTO: pageInfo = {
+        userId: req.body.currentUserId,
+        page: Number(req.params.page),
+        otherUserName: req.params.otherName,
+      };
 
-      const userId = req.body["currentUserId"];
-      const otherName = req.params.otherName;
-
-      const List = await diaryService.getUserList(userId, page, otherName);
+      const List = await diaryService.getUserList(pageDTO);
       res.status(200).send(List);
     } catch (error) {
       next(error);
@@ -102,14 +111,15 @@ diaryRouter.get(
 );
 //✨비회원) 다른 회원 일기장 id==> name
 diaryRouter.get(
-  "/nonUserList/:otherUserName/:pageparams",
+  "/nonUserList/:otherUserName/:page",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageparams } = req.params;
-      const page: number = Number(pageparams);
-      const otherUserName = req.params.otherUserName;
+      let pageDTO: pageInfo = {
+        page: Number(req.params.page),
+        otherUserName: req.params.otherUserName,
+      };
 
-      const List = await diaryService.getnonUserList(page, otherUserName);
+      const List = await diaryService.getnonUserList(pageDTO);
 
       res.status(200).send(List);
     } catch (error) {
@@ -120,11 +130,10 @@ diaryRouter.get(
 
 //✨비회원) (main) 다이어리 all
 diaryRouter.get(
-  "/mainListAll/:pageparams",
+  "/mainListAll/:page",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageparams } = req.params;
-      const page: number = Number(pageparams);
+      const page = Number(req.params.page);
       const List = await diaryService.getMainListAll(page);
       res.status(200).send(List);
     } catch (error) {
@@ -135,14 +144,15 @@ diaryRouter.get(
 
 //회원) (main) 친구 다이어리만 보기
 diaryRouter.get(
-  "/mainListFriend/:pageparams",
+  "/mainListFriend/:page",
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageparams } = req.params;
-      const page: number = Number(pageparams);
-      const userId: string = req.body.currentUserId;
-      const List = await diaryService.getMainListFr(page, userId);
+      let pageDTO: pageInfo = {
+        page: Number(req.params.page),
+        userId: req.body.currentUserId,
+      };
+      const List = await diaryService.getMainListFr(pageDTO);
       res.status(200).send(List);
     } catch (error) {
       next(error);
@@ -151,14 +161,15 @@ diaryRouter.get(
 );
 //회원) (main)  all + friend
 diaryRouter.get(
-  "/mainList/:pageparams",
+  "/mainList/:page",
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageparams } = req.params;
-      const page: number = Number(pageparams);
-      const userId: string = req.body.currentUserId;
-      const List = await diaryService.getMainList(page, userId);
+      let pageDTO: pageInfo = {
+        page: Number(req.params.page),
+        userId: req.body.currentUserId,
+      };
+      const List = await diaryService.getMainList(pageDTO);
       res.status(200).send(List);
     } catch (error) {
       next(error);
@@ -166,7 +177,7 @@ diaryRouter.get(
   }
 );
 
-// TODO:
+// 다이어리 상세
 diaryRouter.get(
   "/detail/:postingId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -190,11 +201,9 @@ diaryRouter.delete(
     const postId = Number(postingId);
     const DeleteData = await diaryService.DeleteOne(postId);
     // send 로 메세지 출력 안됨+ 삭제는 잘 돌아감
-    // console.log(DeleteData, "------data----");
-    // const imgKey = DeleteData.userName;
+
     // TODO: S3 이미지 삭제 마무리 하기
-    const imgKey = "1676825899498_0c70ab1c-5db0-4954-b51a-0965d3fe96d8_.jpeg";
-    await deleteFile(imgKey);
+    await deleteFile(DeleteData.imgName);
 
     res.status(204).send("Deleted successfully.");
   }

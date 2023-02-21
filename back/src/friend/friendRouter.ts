@@ -34,7 +34,7 @@ friendRouter.get(
   }
 );
 
-// //친구 승인
+// //친구 승인 FIXME: 친구신청 한 사람이 수락하게 됨 수정하기
 friendRouter.patch(
   "/accept/",
   loginRequired,

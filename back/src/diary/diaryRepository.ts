@@ -2,14 +2,21 @@ import { PrismaClient } from "@prisma/client";
 import { Diary } from "@prisma/client";
 import { number } from "joi";
 import { encode } from "punycode";
+import { user } from "../utils/Modules";
 const prisma = new PrismaClient();
-import { emotion, Scope } from "../utils/Types";
-import { diaryDTO } from "./interface/diaryInterface";
+import { emotion, Scope, emotionType } from "../utils/Types";
+import {
+  diary,
+  diaryInterface,
+  pageInfo,
+  responseObjectForm,
+} from "./interface/diaryInterface";
 
 class diaryRepository {
-  static async post(diaryDTO: diaryDTO, emotion: emotion) {
+  static async post(diaryDTO: diaryInterface, emotion: emotionType) {
     const diary = await prisma.diary.create({
       data: {
+        emotion: emotion,
         title: diaryDTO.title,
         content: diaryDTO.content,
         subTitle: diaryDTO.subTitle,
@@ -40,42 +47,48 @@ class diaryRepository {
     return diary;
   }
 
-  static async updateDiary(newData: any, emotion: emotion) {
+  static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
     const updateDiary = await prisma.diary.update({
       where: {
-        PK_diary: Number(newData.id),
+        PK_diary: diaryDTO.PK_diary,
       },
       data: {
-        title: newData.title,
-        content: newData.content,
-        subTitle: newData.subTitle,
-        scope: newData.scope,
+        title: diaryDTO.title,
+        subTitle: diaryDTO.subTitle,
+        content: diaryDTO.content,
+        scope: diaryDTO.scope,
+        imgName: diaryDTO?.imgName,
+        img: diaryDTO?.img,
+        emotion: emotion,
       },
     });
 
-    const emotionData = await prisma.diaryEmotion.update({
-      where: {},
-      data: {
-        Excited: emotion.Excited,
-        Comfort: emotion.Comfort,
-        Confidence: emotion.Confidence,
-        thanks: emotion.Confidence,
-        Sadness: emotion.Sadness,
-        Anger: emotion.Anger,
-        Anxiety: emotion.Anxiety,
-        hurt: emotion.hurt,
-        diary: {
-          connect: { PK_diary: updateDiary.PK_diary },
-        },
-      },
-    });
+    // const emotionData = await prisma.diaryEmotion.update({
+    //   where: {},
+    //   data: {
+    //     Excited: emotion.Excited,
+    //     Comfort: emotion.Comfort,
+    //     Confidence: emotion.Confidence,
+    //     thanks: emotion.Confidence,
+    //     Sadness: emotion.Sadness,
+    //     Anger: emotion.Anger,
+    //     Anxiety: emotion.Anxiety,
+    //     hurt: emotion.hurt,
+    //     diary: {
+    //       connect: { PK_diary: updateDiary.PK_diary },
+    //     },
+    //   },
+    // });
     return updateDiary;
   }
 
-  static async updateUserEmotion(userId: string, emotion: string) {
+  static async updateUserEmotion(
+    diaryDTO: Partial<diaryInterface>,
+    emotion: emotionType
+  ) {
     const editData = await prisma.user.update({
       where: {
-        id: Number(userId),
+        id: diaryDTO.userId,
       },
       data: {
         emotion: emotion,
@@ -85,78 +98,80 @@ class diaryRepository {
     return editData;
   }
 
-  static async getMyDiary(userId: string, page: number) {
+  static async getMyDiary(pageDTO: pageInfo) {
     const diary0 = await prisma.diary.findMany({
-      where: { userId: Number(userId) },
+      where: { userId: pageDTO.userId },
       orderBy: {
         createAt: "desc",
       },
-      skip: (page - 1) * 5,
+      skip: (pageDTO.page - 1) * 5,
       take: 5,
     });
     const count = await prisma.diary.count({
-      where: { userId: Number(userId) },
+      where: { userId: pageDTO.userId },
     });
     const resultObject = { data: diary0, count: count };
     return resultObject;
   }
-  // TODO: 친구 scope 설정 관련해서 친구를 조회해야함 -> 친구 먼저 해결하긴 해야할 듯 🟢
-  static async getFriendId(userId: string) {
+
+  // 친구 scope 설정 관련해서 친구를 조회해야함
+  static async getFriendId(pageDTO: pageInfo) {
     const diaryfriend = await prisma.friend.findMany({
-      where: { userId: Number(userId) },
+      where: { userId: pageDTO.userId },
       select: {
         friendId: true,
       },
     });
     return diaryfriend;
   }
-  //   // TODO: 친구 scope 설정 관련해서 친구를 조회해야함 -> 친구 먼저 해결하긴 해야할 듯 🟢
-  static async FriendId(userId: string, friendId: string) {
+
+  // 친구 scope 설정 관련해서 친구를 조회해야함
+  static async FriendId(pageDTO: pageInfo) {
     const diaryfriend = await prisma.friend.findMany({
-      where: { userId: Number(userId), friendId: Number(friendId) },
+      where: { userId: pageDTO.userId, friendId: pageDTO.friendId },
     });
 
     return diaryfriend;
   }
   // 유저 다이어리 친구스코프
-  static async getFriendScope(otherId: string, page: number) {
+  static async getFriendScope(pageDTO: pageInfo) {
     const diary = await prisma.diary.findMany({
-      where: { userId: Number(otherId), scope: { in: ["friend", "all"] } },
+      where: { userId: pageDTO.friendId, scope: { in: ["friend", "all"] } },
       orderBy: {
         createAt: "desc",
       },
-      skip: (page - 1) * 5,
+      skip: (pageDTO.page - 1) * 5,
       take: 5,
     });
     const count = await prisma.diary.count({
-      where: { userId: Number(otherId), scope: { in: ["friend", "all"] } },
+      where: { userId: pageDTO.friendId, scope: { in: ["friend", "all"] } },
     });
-    const resultObject = { data: diary, count: count };
+    const resultObject: responseObjectForm = { diary: diary, count: count };
     return resultObject;
   }
   // 유저 다이어리 all 스코프
-  static async getAllScope(otherId: string, page: number) {
+  static async getAllScope(pageDTO: pageInfo) {
     const diary = await prisma.diary.findMany({
       where: {
-        userId: Number(otherId),
+        userId: pageDTO.friendId,
         scope: "all",
       },
       orderBy: {
         createAt: "desc",
       },
-      skip: (page - 1) * 5,
+      skip: (pageDTO.page - 1) * 5,
       take: 5,
     });
     const count = await prisma.diary.count({
-      where: { userId: Number(otherId), scope: "all" },
+      where: { userId: pageDTO.friendId, scope: "all" },
     });
-    const resultObject = { data: diary, count: count };
+    const resultObject: responseObjectForm = { diary: diary, count: count };
 
     return resultObject;
   }
 
   // main) friend+ all 스코프 추출
-  static async getMainDiaryFr(page: number, friendId: any) {
+  static async getMainDiaryFr(pageDTO: pageInfo, friendId: any) {
     const diary = await prisma.diary.findMany({
       where: {
         userId: { in: friendId },
@@ -165,7 +180,7 @@ class diaryRepository {
       orderBy: {
         createAt: "desc",
       },
-      skip: (page - 1) * 3,
+      skip: (pageDTO.page - 1) * 3,
       take: 3,
     });
     return diary;
@@ -205,6 +220,12 @@ class diaryRepository {
 
   //delete
   static async deletepost(postId: number) {
+    // const deleteEmotion = await prisma.diaryEmotion.delete({
+    //   // where:{FK_diary: postId}
+    //   where: {
+    //     diaryId: postId,
+    //   },
+    // });
     const deleteOne = await prisma.diary.delete({
       where: { PK_diary: postId },
     });
@@ -249,10 +270,10 @@ class diaryRepository {
     return diary;
   }
 
-  static async findByUserName(name: string) {
+  static async findByUserName(pageDTO: pageInfo) {
     const findUser = await prisma.user.findUnique({
       where: {
-        name: name,
+        name: pageDTO.otherUserName,
       },
     });
     return findUser;

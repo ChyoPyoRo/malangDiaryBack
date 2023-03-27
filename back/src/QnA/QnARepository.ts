@@ -45,7 +45,7 @@ export class QnARepository {
       data: {
         content: QnA.content,
         user: {
-          connect: { id: QnA.userId },
+          connect: { loginId: QnA.userId },
         },
         diaryQuestion: {
           connect: {
@@ -102,7 +102,7 @@ export class QnARepository {
     return answerList;
   }
 
-  public async getDate(userId: number) {
+  public async getDate(userId: string) {
     const latestAnswer = await prisma.diaryAnswer.findFirst({
       where: { userId },
       orderBy: {
@@ -114,7 +114,7 @@ export class QnARepository {
     });
     return latestAnswer;
   }
-  public async CountOfQuestion(userId: number) {
+  public async CountOfQuestion(userId: string) {
     const questionInfo = await prisma.diaryAnswer.count({
       where: { userId },
     });

@@ -12,19 +12,32 @@ authRouter.post(
   "/signup",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, name, password } = req.body;
+      const { loginId, email, name, password, gender } = req.body;
 
-      if (!req.body.email || !req.body.name || !req.body.password) {
+      if (
+        !req.body.loginId ||
+        !req.body.email ||
+        !req.body.name ||
+        !req.body.password ||
+        !req.body.gender
+      ) {
+        //gender는 나중에 사용할 것
         const message: string = "Data is missing. Please re-enter. ";
         throw new Error(message);
       }
-      const userData = await authService.signUp(email, password, name);
+      //가입할 때는 userId, email, password, name, gender가 필요함
+      const userData = await authService.signUp(
+        loginId,
+        email,
+        password,
+        name,
+        gender
+      );
 
       res.status(201).send(userData);
     } catch (error) {
       next(error);
     }
-
     // const returnData:
   }
 );
@@ -33,20 +46,18 @@ authRouter.post(
   "/login",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password } = req.body;
-      if (!req.body.email || !req.body.password) {
+      const { loginId, password } = req.body;
+      if (!req.body.loginId || !req.body.password) {
         const message: string = "Data is missing. Please re-enter. ";
         throw new Error(message);
       }
-      const { user, accesstoken } = await authService.login(email, password);
+      const { user, accesstoken } = await authService.login(loginId, password);
       console.log(user);
-
       if (!user.emotion) {
         const message = "프로필 젤리를 선택해주세요.";
         res.status(200).send({ message, user, accesstoken });
         return;
       }
-
       res.status(201).send({ user, accesstoken });
     } catch (error) {
       next(error);
@@ -77,10 +88,8 @@ authRouter.post(
   "/confirmEmail",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { CertiNumber } = req.body;
-      const { email } = req.body;
+      const { CertiNumber, email } = req.body;
       await authService.emailConfirm(email, CertiNumber);
-
       res.status(201).send("이메일 인증이 완료되었습니다.");
     } catch (error) {
       next(error);
@@ -120,14 +129,13 @@ authRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       //🟪🟪🟪 type 에러 =>>> const userId: string | string[] | undefined 3가지 타입에 해당한다
-      const userId: number = req.body["currentUserId"];
-      console.log(userId);
-      console.log(req.body);
-
+      //id를 int 값으로 수정해서 number 타입으로 선언해줌
+      const id: string = req.body["currentUserId"];
+      console.log("authRouter : 현재 로그인 한 사람", id);
+      // console.log(req.body);
       // const userId: string = req.body.currentUserId!;
       // const userId = "8ee8758b-c680-4d06-a3f3-945ae7a9e8a5";
-
-      const data = await authService.getCurrentUser(userId);
+      const data = await authService.getCurrentUser(id);
       res.status(200).send(data);
     } catch (error) {
       next(error);
@@ -140,7 +148,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: number = req.body["currentUserId"];
+      const userId: string = req.body["currentUserId"];
       type obj = {
         password: "string";
         newPassword: "string";
@@ -163,7 +171,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: number = req.body["currentUserId"];
+      const userId: string = req.body["currentUserId"];
       const description: string = req.body.description;
 
       const editResult = await authService.editDescription(userId, description);
@@ -178,7 +186,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: number = req.body["currentUserId"];
+      const userId: string = req.body["currentUserId"];
       const name: string = req.body.name;
 
       const editResult = await authService.editname(userId, name);
@@ -193,7 +201,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: number = req.body["currentUserId"];
+      const userId: string = req.body["currentUserId"];
       const emotion: string = req.body.emotion;
 
       const editResult = await authService.editemotion(userId, emotion);
@@ -208,7 +216,7 @@ authRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: number = req.body["currentUserId"];
+      const userId: string = req.body["currentUserId"];
 
       const editResult = await authService.editWithdrawal(userId);
       res.status(200).send(editResult);

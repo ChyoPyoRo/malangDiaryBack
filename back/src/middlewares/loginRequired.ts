@@ -12,11 +12,9 @@ function loginRequired(req: Request, res: Response, next: NextFunction) {
   if (accessToken) {
     try {
       const secretkey: Secret = JWT_SECRET_KEY;
-
       /*
       //🟪 TODO 여기 jwt 일단 any로 가되, 꼭 형식 고치기
       //🟪 currentUserId도 config파일하고 추가 파일 넣어서 한번 해보기
-      
       const jwtDecoded: string|JwtPayload  = Jwt.verify(accessToken, secretkey);
       const verifyJwt = <T>(accessToken: string): T | null => {
         try {
@@ -30,11 +28,9 @@ function loginRequired(req: Request, res: Response, next: NextFunction) {
       console.log(jwtDecoded(accessToken));
       */
       const jwtDecoded: any = Jwt.verify(accessToken, secretkey);
-      const userId = jwtDecoded.userId;
-
-      req.body["currentUserId"] = userId;
+      const loginId = jwtDecoded.loginId;
+      req.body["currentUserId"] = loginId;
       // console.log("middleware--", userId);
-
       // currentUserId 타입 정의 조금 더 공부해보기
       next();
     } catch (error) {

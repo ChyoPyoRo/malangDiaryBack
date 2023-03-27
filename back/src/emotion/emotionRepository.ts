@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 class emotionRepository {
   static async getEmotions(
-    userId: number,
+    userId: string,
     startDate: Date,
     endDate: Date,
     emotion: string
@@ -13,7 +13,7 @@ class emotionRepository {
 
     let emotionCount = await prisma.diary.count({
       where: {
-        userId: userId,
+        writer_id: userId,
         emotion: emotion,
         createAt: {
           gte: startDate,

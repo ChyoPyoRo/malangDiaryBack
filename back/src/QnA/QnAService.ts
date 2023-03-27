@@ -30,7 +30,7 @@ export default class QnAService {
 
     return savedData;
   }
-  public async getQuestion(userId: number): Promise<diaryQuestion | null> {
+  public async getQuestion(userId: string): Promise<diaryQuestion | null> {
     const QnARepositoryInstance = Container.get(QnARepository);
     // new instance  ==== get count 관련
     const count: number = await QnARepositoryInstance.CountOfQuestion(userId);

@@ -21,8 +21,8 @@ friendRouter.get(
     try {
       //요청 유저 와 대상 유저를 req에서 식별해야함
       const standByFriendDTO: standByFriend = {
-        requester: Number(req.params.id),
-        respondent: req.body.currentUserId,
+        respondentId: String(req.params.id),
+        requesterId: req.body.currentUserId,
       };
 
       const friendRequest = await friendService.sendRequest(standByFriendDTO);
@@ -34,7 +34,6 @@ friendRouter.get(
   }
 );
 
-// //친구 승인 FIXME: 친구신청 한 사람이 수락하게 됨 수정하기
 friendRouter.patch(
   "/accept/",
   loginRequired,
@@ -42,10 +41,11 @@ friendRouter.patch(
     console.log("\x1b[35m친구 신청 승인 요청 들어옴\x1b[0m");
     try {
       //해당 요청의 id 값을 통해 해당 값을 특정하고, 그 부분의 상태값을 변경
-
-      const standByFriendDTO: Partial<standByFriendDTO> = {
-        PK_standByFriend: req.body.id,
-        respondent: req.body.currentUserId,
+      //승인이라는 건 메시지를 수령한 사람이 대상자(respondent)라는 이야기
+      const standByFriendDTO: Partial<standByFriend> = {
+        //PK_standByFriend는 PK를 찾을 수 없으므로 partial로 선언
+        requesterId: req.body.id,
+        respondentId: req.body.currentUserId,
       };
       if (!standByFriendDTO) {
         const message: string = " don't login ";
@@ -69,8 +69,8 @@ friendRouter.patch(
       //해당 요청의 id 값을 통해 해당 값을 특정하고, 그 부분의 상태값을 변경
       // const currentUser : string = '3';
       const standByFriendDTO: Partial<standByFriendDTO> = {
-        PK_standByFriend: req.body.id,
-        respondent: req.body.currentUserId,
+        requesterId: req.body.id,
+        respondentId: req.body.currentUserId,
       };
       if (!standByFriendDTO) {
         const message: string = " don't login ";
@@ -92,11 +92,11 @@ friendRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     console.log("친구 상태 전송 요청 들어옴");
     try {
-      const standByFriendDTO: Partial<standByFriendDTO> = {
-        requester: Number(req.params.id),
-        respondent: req.body.currentUserId,
+      const standByFriendDTO: Partial<standByFriend> = {
+        requesterId: req.params.id,
+        respondentId: req.body.currentUserId,
       };
-      if (!standByFriendDTO.respondent) {
+      if (!standByFriendDTO.respondentId) {
         const message: string = " don't login ";
         throw new Error(message);
       }
@@ -129,7 +129,7 @@ friendRouter.get(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const currentUserId: Partial<friend> = req.body.currentUserId;
+      const currentUserId: friend = req.body.currentUserId;
       if (!currentUserId) {
         const message: string = "please login";
         throw new Error(message);
@@ -148,7 +148,7 @@ friendRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const friendDTO: friend = {
-        friendId: Number(req.params.userId),
+        friendId: String(req.params.userId),
         userId: req.body.currentUserId,
       };
       console.log(

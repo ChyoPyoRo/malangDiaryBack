@@ -12,25 +12,25 @@ class friendRepository {
     //승인대기 0, 수락1, 거절2, 취소됨3
     const newRequest = await prisma.standByFriend.create({
       data: {
-        requester: standByFriendDTO.respondent,
-        respondent: standByFriendDTO.requester,
+        requesterId: standByFriendDTO.respondentId,
+        respondentId: standByFriendDTO.requesterId,
         relationship: 0,
       },
     });
     return newRequest;
   }
 
-  static async checkRequest(standByFriendDTO: Partial<standByFriendDTO>) {
+  static async checkRequest(standByFriendDTO: Partial<standByFriend>) {
     const currentUserRequest = await prisma.standByFriend.findFirst({
       where: {
-        requester: standByFriendDTO.requester,
-        respondent: standByFriendDTO.respondent,
+        requesterId: standByFriendDTO.requesterId,
+        respondentId: standByFriendDTO.respondentId,
       },
     });
     const respondentRequest = await prisma.standByFriend.findFirst({
       where: {
-        requester: standByFriendDTO.respondent,
-        respondent: standByFriendDTO.requester,
+        requesterId: standByFriendDTO.respondentId,
+        respondentId: standByFriendDTO.requesterId,
       },
     });
 
@@ -39,7 +39,7 @@ class friendRepository {
   static async checkRequestById(standByFriendDTO: Partial<standByFriendDTO>) {
     const checkRequest = await prisma.standByFriend.findFirst({
       where: {
-        PK_standByFriend: standByFriendDTO.PK_standByFriend,
+        respondentId: standByFriendDTO.respondentId,
       },
     });
     return checkRequest;
@@ -63,7 +63,7 @@ class friendRepository {
   static async readWaitResponse(respondent: Partial<friend>) {
     const result = await prisma.standByFriend.findMany({
       where: {
-        respondent: Number(respondent),
+        respondentId: String(respondent),
         relationship: 0,
       },
     });
@@ -73,7 +73,7 @@ class friendRepository {
   static async readAcceptRequest(requester: Partial<friend>) {
     const result = await prisma.standByFriend.findMany({
       where: {
-        requester: Number(requester),
+        requesterId: String(requester),
         relationship: 1,
       },
     });
@@ -83,23 +83,23 @@ class friendRepository {
   }
 
   //   TODO: freind 외래키 수정됨에 따라 관련 로직 수정해야함
-  static async makeFriend(standByFriendDTO: standByFriendDTO) {
+  static async makeFriend(standByFriendDTO: standByFriend) {
     const resultOne: object = await prisma.friend.create({
       data: {
-        userId: standByFriendDTO.requester,
+        userId: standByFriendDTO.requesterId,
         user: {
           connect: {
-            id: standByFriendDTO.respondent,
+            loginId: standByFriendDTO.respondentId,
           },
         },
       },
     });
     const resultTwo: object = await prisma.friend.create({
       data: {
-        userId: standByFriendDTO.respondent,
+        userId: standByFriendDTO.respondentId,
         user: {
           connect: {
-            id: standByFriendDTO.requester,
+            loginId: standByFriendDTO.requesterId,
           },
         },
       },
@@ -111,7 +111,7 @@ class friendRepository {
   static async findFriend(userId: Partial<friend>) {
     const result = await prisma.friend.findMany({
       where: {
-        userId: Number(userId),
+        userId: String(userId),
       },
     });
     return result;

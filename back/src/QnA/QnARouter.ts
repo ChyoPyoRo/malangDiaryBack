@@ -49,7 +49,7 @@ QnARouter.get(
   }),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = Number(req.body.currentUserId);
+      const userId = String(req.body.currentUserId);
       const QnAInstance = Container.get(QnAService);
 
       const getOneQuestion = await QnAInstance.getQuestion(userId);
@@ -78,7 +78,7 @@ QnARouter.post(
     try {
       const QnA: Pick<diaryAnswer, "questionNumber" | "userId" | "content"> = {
         questionNumber: Number(req.params.questionNumber),
-        userId: Number(req.body.currentUserId),
+        userId: String(req.body.currentUserId),
         content: req.body.content,
       };
       const QnAInstance = Container.get(QnAService);
@@ -102,7 +102,7 @@ QnARouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: Pick<diaryAnswer, "userId"> & pagenation = {
-        userId: Number(req.body.currentUserId),
+        userId: String(req.body.currentUserId),
         page: Number(req.params.page),
         startDate: new Date(req.params.startDate),
         endDate: new Date(req.params.endDate),

@@ -1,6 +1,6 @@
 export interface diaryAnswer {
   id: number;
-  userId: number;
+  userId: string;
   questionNumber: number;
   createAt: Date;
   updateAt: Date;

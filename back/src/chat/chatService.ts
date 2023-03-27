@@ -1,6 +1,6 @@
 import { authRepository } from "../auth/authRepository";
 import { chatRepository } from "./chatRepository";
-import { nameCheck } from "../middlewares/nameCheck";
+import { loginIdCheck } from "../middlewares/loginIdCheck";
 
 interface LooseObject {
   [key: string]: any;
@@ -36,13 +36,13 @@ class chatService {
       date
     );
     console.log(createNewRoom);
-    const userFstData = await nameCheck(createNewRoom.userIdFst);
+    const userFstData = await loginIdCheck(createNewRoom.userIdFst);
     createNewRoom.userFstName = userFstData?.name;
-    const userSndData = await nameCheck(createNewRoom.userIdSnd);
+    const userSndData = await loginIdCheck(createNewRoom.userIdSnd);
     createNewRoom.userSndData = userSndData?.name;
     return createNewRoom;
   }
-  static async saveMessage(message: string, writer: number, chatRoom: string) {
+  static async saveMessage(message: string, writer: string, chatRoom: string) {
     console.log("메시지 저장");
     //리턴값은 필요 없을듯 + 에러처리는 prisma 안에서 됨
     console.log(Date());
@@ -67,11 +67,11 @@ class chatService {
     //https://bobbyhadz.com/blog/typescript-type-object-must-have-symbol-iterator-method
     for (const key in resultFinal) {
       // console.log(resultFinal[key])
-      let findFstUser = await authRepository.findByUserId(
+      let findFstUser = await authRepository.findByLoginId(
         resultFinal[key].userIdFst
       );
       resultFinal[key].userIdFstName = findFstUser?.name || "No Exist User";
-      let findSndUser = await authRepository.findByUserId(
+      let findSndUser = await authRepository.findByLoginId(
         resultFinal[key].userIdSnd
       );
       resultFinal[key].userIdSndName = findSndUser?.name || "No Exist User";
@@ -90,7 +90,7 @@ class chatService {
     const chatList: LooseArray = await chatRepository.chatList(roomName);
     console.log(typeof chatList);
     for (const key in chatList) {
-      let findWriter = await authRepository.findByUserId(chatList[key].userId);
+      let findWriter = await authRepository.findByLoginId(chatList[key].userId);
       chatList[key].userName = findWriter?.name || "No Exist User";
     }
     console.log(chatList);

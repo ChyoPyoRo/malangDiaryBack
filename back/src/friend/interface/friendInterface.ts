@@ -1,6 +1,6 @@
 export interface friend {
-  friendId: number;
-  userId: number;
+  friendId: string;
+  userId: string;
 }
 
 export interface friendDTO extends friend {
@@ -9,14 +9,14 @@ export interface friendDTO extends friend {
 }
 
 export interface standByFriend {
-  requester: number;
-  respondent: number;
+  requesterId: string;
+  respondentId: string;
 }
 
 export interface standByFriendDTO extends standByFriend {
+  PK_standByFriend: number;
   relationship: number;
   createAt: Date;
-  PK_standByFriend: number;
   message?: string;
   respondentName?: string;
   requesterName?: string;

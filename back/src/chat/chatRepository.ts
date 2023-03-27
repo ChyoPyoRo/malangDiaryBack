@@ -60,7 +60,7 @@ class chatRepository {
   }
 
   static async createMessage(
-    writer: number,
+    writer: string,
     message: string,
     chatRoom: string
   ) {

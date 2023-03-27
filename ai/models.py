@@ -24,7 +24,6 @@ class dataType(BaseModel):
 
 
 class model:
-
     # def sentenceSimilarity(data: dataType):
     #     print(data)
     #     model = SentenceTransformer(
@@ -34,13 +33,11 @@ class model:
     #     compareContentString = data.vector
     #     simList = []
     #     # print("🔥🔥1")
-
     #     def tofloat(data):
     #         data = data.replace("[", "").replace(
     #             "]", "").replace("\n", "").split(" ")
     #         data = [float(i) for i in data if i != '']
     #         return data
-
     #     for vec in compareContentString:
     #         result = np.array(tofloat(vec))
     #         simList.append(result)
@@ -56,7 +53,6 @@ class model:
 
     #     sortedDic = sorted(
     #         simDic.items(), key=lambda item: item[1], reverse=True)
-
     #     resultList = []
     #     for i in range(3):
     #         resultList.append(sortedDic[i][0])

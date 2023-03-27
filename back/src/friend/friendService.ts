@@ -1,5 +1,5 @@
 import { friendRepository } from "./friendRepository";
-import { nameCheck } from "../middlewares/nameCheck";
+import { loginIdCheck } from "../middlewares/loginIdCheck";
 import {
   friend,
   friendDTO,
@@ -35,11 +35,12 @@ class friendService {
     } else {
       const makeNewRequest: standByFriendDTO =
         await friendRepository.makeRequestOnDB(standByFriendDTO);
-      // 신청 성공 커맨트는 왜 포함?
+      // 신청 성공 커맨트는 왜 포함? -> response로 일치한다는 정답이 전송되어야 되니까
       makeNewRequest.message = "신청 성공";
-      const respondentData = await nameCheck(makeNewRequest.respondent);
+      //loginId를 통해서 값을 찾는 loginIDCheck 함수 속에 있는 name 값을 등록
+      const respondentData = await loginIdCheck(makeNewRequest.respondentId);
       makeNewRequest.respondentName = respondentData?.name;
-      const requesterData = await nameCheck(makeNewRequest.requester);
+      const requesterData = await loginIdCheck(makeNewRequest.requesterId);
       makeNewRequest.requesterName = requesterData?.name;
       console.log("\x1b[46m추가 목록 생성 \x1b[0m : ", makeNewRequest);
       return makeNewRequest;
@@ -51,16 +52,14 @@ class friendService {
     const findRequest = await friendRepository.checkRequestById(
       standByFriendDTO
     );
-
-    console.log("11111", findRequest);
-
+    console.log("in acceptRequest : ", findRequest);
     if (!findRequest) {
       const message: string = "해당 요청은 존재하지 않습니다";
       throw new Error(message);
     } else {
-      if (standByFriendDTO.respondent != findRequest.respondent) {
-        console.log("왜 여기로 올까? ", standByFriendDTO.respondent);
-        console.log("왜 여기로 올까? ", findRequest.respondent);
+      if (standByFriendDTO.respondentId != findRequest.respondentId) {
+        console.log("req에 respondentID : ", standByFriendDTO.respondentId);
+        console.log("찾아진 요청의 respondentId : ", findRequest.respondentId);
         const message: string = "권한이 없습니다.";
         throw new Error(message);
       } else {
@@ -74,11 +73,14 @@ class friendService {
           await friendRepository.makeFriend(findRequest);
           //if문으로 거를까 하다가 위에서 에러가 발생하면 밑에까지 오지 않기 때문에 데이터가 바뀌지 않을 것이라고 예상
           const changeReqFinish: standByFriendDTO =
-            await friendRepository.changeRequest(standByFriendDTO, 1);
+            await friendRepository.changeRequest(findRequest, 1);
           changeReqFinish.message = "승인 성공";
-          const respondentData = await nameCheck(changeReqFinish.respondent);
+          //loginIDCheck도 ID를 통해서 유저를 찾는 것이기 때문에 이 값을 그대로 사용 (id로 했을 때 훨씬 빠르지 않나)
+          const respondentData = await loginIdCheck(
+            changeReqFinish.respondentId
+          );
           changeReqFinish.respondentName = respondentData?.name;
-          const requesterData = await nameCheck(changeReqFinish.requester);
+          const requesterData = await loginIdCheck(changeReqFinish.requesterId);
           changeReqFinish.requesterName = requesterData?.name;
           return changeReqFinish;
         }
@@ -94,7 +96,7 @@ class friendService {
       const message: string = "해당 요청은 존재하지 않습니다";
       throw new Error(message);
     } else {
-      if (standByFriendDTO.respondent != findRequest.respondent) {
+      if (standByFriendDTO.respondentId != findRequest.respondentId) {
         console.log(findRequest.PK_standByFriend);
         const message: string = "권한이 없습니다.";
         throw new Error(message);
@@ -110,18 +112,20 @@ class friendService {
           console.log(findRequest.PK_standByFriend);
           console.log("유저 확인 완료");
           const changeReqFinish: standByFriendDTO =
-            await friendRepository.changeRequest(standByFriendDTO, 2);
+            await friendRepository.changeRequest(findRequest, 2);
           changeReqFinish.message = "거절 성공";
-          const respondentData = await nameCheck(changeReqFinish.respondent);
+          const respondentData = await loginIdCheck(
+            changeReqFinish.respondentId
+          );
           changeReqFinish.respondentName = respondentData?.name;
-          const requesterData = await nameCheck(changeReqFinish.requester);
+          const requesterData = await loginIdCheck(changeReqFinish.requesterId);
           changeReqFinish.requesterName = requesterData?.name;
           return changeReqFinish;
         }
       }
     }
   }
-  static async checkRequest(standByFriendDTO: Partial<standByFriendDTO>) {
+  static async checkRequest(standByFriendDTO: Partial<standByFriend>) {
     console.log("Service - Check");
     const { currentUserRequest, respondentRequest } =
       await friendRepository.checkRequest(standByFriendDTO);
@@ -158,16 +162,18 @@ class friendService {
       await friendRepository.readAcceptRequest(currentUserId);
 
     for (let key in waitRequest) {
-      const respondentData = await nameCheck(waitRequest[key].respondent);
+      const respondentData = await loginIdCheck(waitRequest[key].respondentId);
       waitRequest[key].respondentName = respondentData?.name;
-      const requesterData = await nameCheck(waitRequest[key].requester);
+      const requesterData = await loginIdCheck(waitRequest[key].requesterId);
       waitRequest[key].requesterName = requesterData?.name;
       result.push(waitRequest[key]);
     }
     for (let key in acceptRequest) {
-      const respondentData = await nameCheck(acceptRequest[key].respondent);
+      const respondentData = await loginIdCheck(
+        acceptRequest[key].respondentId
+      );
       acceptRequest[key].respondentName = respondentData?.name;
-      const requesterData = await nameCheck(acceptRequest[key].requester);
+      const requesterData = await loginIdCheck(acceptRequest[key].requesterId);
       acceptRequest[key].requesterName = requesterData?.name;
       result.push(acceptRequest[key]);
     }
@@ -187,7 +193,7 @@ class friendService {
       friendObject
     );
     for (let key in result) {
-      const friendData = await nameCheck(result[key].friendId);
+      const friendData = await loginIdCheck(result[key].friendId);
       result[key].friendName = friendData?.name;
     }
     return result;
@@ -222,8 +228,8 @@ class friendService {
     // result.push(secondFriend);
     // console.log(result);
     const standByFriendObject: standByFriend = {
-      requester: friendObject.friendId,
-      respondent: friendObject.userId,
+      requesterId: friendObject.friendId,
+      respondentId: friendObject.userId,
     };
     console.log("신청 값도 바꾸기");
 

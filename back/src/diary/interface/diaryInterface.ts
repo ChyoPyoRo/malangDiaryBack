@@ -10,19 +10,19 @@ export interface diaryInterface {
   img?: string;
   imgName?: string;
   content: string;
-  scope: string;
+  scope: string; //off : 아무도 조회 못함 , all: 모두 조회, friend : 친구만 조회
   title: string;
   subTitle?: string;
-  userId?: number;
+  writer_id?: string;
   emotion?: emotionType;
   diaryEmotion?: diaryEmotion;
 }
 
 export interface pageInfo {
   page: number;
-  userId?: number;
+  userId?: string; // loginId
   otherUserName?: string;
-  friendId?: number;
+  friendId?: string; // loginId
 }
 
 export interface responseObjectForm {

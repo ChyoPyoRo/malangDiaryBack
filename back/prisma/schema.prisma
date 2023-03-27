@@ -8,9 +8,11 @@ datasource db {
 }
 
 model user {
-  id           Int            @id @unique @default(autoincrement())
+  PK_user      Int            @id @unique @default(autoincrement())
+  loginId      String         @unique @db.VarChar(40)
   email        String         @db.VarChar(40)
-  name         String         @unique @db.VarChar(20)
+  name         String         @db.VarChar(20)
+  gender       String         @db.VarChar(20)
   password     String         @db.VarChar(60)
   description  String?        @db.VarChar(100)
   createAt     DateTime       @default(now())
@@ -40,13 +42,13 @@ model Diary {
   updateAt     DateTime      @updatedAt
   title        String        @db.VarChar(40)
   subTitle     String?       @db.VarChar(40)
-  userId       Int           @map("FK_userId")
+  writer_id    String        @map("FK_userId")
   imgName      String?
   emotion      String        @db.VarChar(10)
-  user         user          @relation(fields: [userId], references: [id])
+  user         user          @relation(fields: [writer_id], references: [loginId])
   diaryEmotion diaryEmotion?
 
-  @@index([userId], map: "diary_userId_fkey")
+  @@index([writer_id], map: "diary_userId_fkey")
 }
 
 model diaryEmotion {
@@ -64,12 +66,12 @@ model diaryEmotion {
 
 model message {
   id       String   @id @unique @default(uuid())
-  userId   Int
+  userId   String //loginId
   text     String   @db.VarChar(200)
   createAt DateTime @default(now())
   room     String
   chatRoom chatRoom @relation(fields: [room], references: [id])
-  user     user     @relation(fields: [userId], references: [id])
+  user     user     @relation(fields: [userId], references: [loginId])
 
   @@index([userId], map: "message_userId_fkey")
   @@index([room], map: "message_room_fkey")
@@ -77,25 +79,25 @@ model message {
 
 model chatRoom {
   id        String    @id @unique @default(uuid())
-  userIdFst String
-  userIdSnd String
+  userIdFst String //loginId
+  userIdSnd String //loginId + 둘의 차이는 모시깽이
   latest    DateTime
   message   message[]
 }
 
 model standByFriend {
-  requester        Int
-  respondent       Int
+  PK_standByFriend Int      @id @unique @default(autoincrement())
+  requesterId      String //loginId
+  respondentId     String //loginId
   relationship     Int      @default(0) @db.TinyInt
   createAt         DateTime @default(now())
-  PK_standByFriend Int      @id @unique @default(autoincrement())
 }
 
 model friend {
-  id       Int  @id @unique @default(autoincrement())
-  friendId Int
-  userId   Int
-  user     user @relation(fields: [friendId], references: [id])
+  id       Int    @id @unique @default(autoincrement())
+  friendId String // loginId
+  userId   String // loginId
+  user     user   @relation(fields: [friendId], references: [loginId])
 
   @@index([friendId], map: "friend_friendId_fkey")
 }
@@ -103,8 +105,8 @@ model friend {
 model refreshToken {
   id           String @id @unique @default(uuid())
   refreshToken String @db.VarChar(500)
-  userId       Int
-  user         user   @relation(fields: [userId], references: [id])
+  userId       String
+  user         user   @relation(fields: [userId], references: [loginId])
 
   @@index([userId], map: "refreshToken_userId_fkey")
 }
@@ -113,8 +115,8 @@ model EmotionData {
   emotion        String   @db.VarChar(20)
   createAt       DateTime @default(now())
   PK_emotionData Int      @id @unique @default(autoincrement())
-  userId         Int      @map("FK_userId")
-  user           user     @relation(fields: [userId], references: [id])
+  userId         String   @map("loginId")
+  user           user     @relation(fields: [userId], references: [loginId])
 
   @@index([userId], map: "emotionData_userId_fkey")
 }
@@ -122,15 +124,15 @@ model EmotionData {
 model DiaryAnswer {
   id             Int           @id @unique @default(autoincrement()) @map("PK_diaryAnswer")
   questionNumber Int           @map("FK_questionNumber")
-  userId         Int           @map("FK_userId")
+  userId         String        @map("loginId")
   content        String        @db.VarChar(600)
   createAt       DateTime      @default(now())
   updateAt       DateTime      @updatedAt
   diaryQuestion  DiaryQuestion @relation(fields: [questionNumber], references: [id])
-  user           user          @relation(fields: [userId], references: [id])
+  user           user          @relation(fields: [userId], references: [loginId])
 
   @@index([questionNumber], map: "diaryAnswer_FK_questionNumber_fkey")
-  @@index([userId], map: "diaryAnswer_FK_userId_fkey")
+  @@index([userId], map: "diaryAnswer_loginId_fkey")
 }
 
 model DiaryQuestion {

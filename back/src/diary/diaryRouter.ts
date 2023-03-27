@@ -25,7 +25,7 @@ diaryRouter.post(
     try {
       const file: any = req.file;
       const diaryDTO: diaryInterface = {
-        userId: req.body.currentUserId,
+        writer_id: req.body.currentUserId,
         title: req.body.title,
         subTitle: req.body.subTitle,
         content: req.body.content,
@@ -51,8 +51,8 @@ diaryRouter.patch(
     try {
       const file: any = req.file;
       const diaryDTO: Partial<diary> = {
-        userId: req.body.currentUserId,
-        PK_diary: req.body.PK_diary,
+        writer_id: req.body.currentUserId,
+        PK_diary: req.body.id,
         title: req.body.title,
         subTitle: req.body.subTitle,
         content: req.body.content,
@@ -205,7 +205,7 @@ diaryRouter.delete(
     // TODO: S3 이미지 삭제 마무리 하기
     await deleteFile(DeleteData.imgName);
 
-    res.status(204).send("Deleted successfully.");
+    res.status(204).send({ message: "Deleted successfully." });
   }
 );
 

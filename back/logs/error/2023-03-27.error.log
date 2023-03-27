@@ -1,0 +1,267 @@
+2023-03-27 20:52:28 error: jwt expired
+2023-03-27 20:55:07 error: Password doesn't match.
+2023-03-27 20:56:34 error: jwt expired
+2023-03-27 21:01:53 error: jwt expired
+2023-03-27 21:21:17 error: 
+Invalid `prisma.user.create()` invocation in
+O:\emotionDiary\back\back\src\auth\authRepository.ts:13:39
+
+  10   gender: string
+  11 ) {
+  12   const friendTempid: number = 1;
+→ 13   const newUser = await prisma.user.create(
+Unique constraint failed on the constraint: `user_loginId_key`
+2023-03-27 21:22:34 error: 
+Invalid `prisma.user.create()` invocation in
+O:\emotionDiary\back\back\src\auth\authRepository.ts:13:39
+
+  10   gender: string
+  11 ) {
+  12   const friendTempid: number = 1;
+→ 13   const newUser = await prisma.user.create(
+Unique constraint failed on the constraint: `user_loginId_key`
+2023-03-27 21:23:03 error: 
+Invalid `prisma.user.create()` invocation in
+O:\emotionDiary\back\back\src\auth\authRepository.ts:13:39
+
+  10   gender: string
+  11 ) {
+  12   const friendTempid: number = 1;
+→ 13   const newUser = await prisma.user.create(
+Unique constraint failed on the constraint: `user_loginId_key`
+2023-03-27 21:24:11 error: email is already exists.
+2023-03-27 21:24:17 error: id is already exists.
+2023-03-27 21:42:07 error: 
+Invalid `prisma.diary.update()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:51:44
+
+  48 }
+  49 
+  50 static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
+→ 51   const updateDiary = await prisma.diary.update({
+         where: {
+       ?   PK_diary?: Int
+         },
+         data: {
+           title: '내 일기',
+           subTitle: undefined,
+           content: '젤리왕은 붕어빵 장사를 시작하였어요',
+           scope: 'friend',
+           imgName: undefined,
+           img: undefined,
+           emotion: '감사한'
+         }
+       })
+
+Argument where of type DiaryWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 21:55:08 error: 
+Invalid `prisma.diary.update()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:51:44
+
+  48 }
+  49 
+  50 static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
+→ 51   const updateDiary = await prisma.diary.update({
+         where: {
+       ?   PK_diary?: Int
+         },
+         data: {
+           title: '내 일기',
+           subTitle: undefined,
+           content: '젤리왕은 붕어빵 장사를 시작하였어요',
+           scope: 'friend',
+           imgName: undefined,
+           img: undefined,
+           emotion: '감사한'
+         }
+       })
+
+Argument where of type DiaryWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 21:55:09 error: 
+Invalid `prisma.diary.update()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:51:44
+
+  48 }
+  49 
+  50 static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
+→ 51   const updateDiary = await prisma.diary.update({
+         where: {
+       ?   PK_diary?: Int
+         },
+         data: {
+           title: '내 일기',
+           subTitle: undefined,
+           content: '젤리왕은 붕어빵 장사를 시작하였어요',
+           scope: 'friend',
+           imgName: undefined,
+           img: undefined,
+           emotion: '감사한'
+         }
+       })
+
+Argument where of type DiaryWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 21:55:15 error: 
+Invalid `prisma.diary.update()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:51:44
+
+  48 }
+  49 
+  50 static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
+→ 51   const updateDiary = await prisma.diary.update({
+         where: {
+       ?   PK_diary?: Int
+         },
+         data: {
+           title: '내 일기',
+           subTitle: undefined,
+           content: '젤리왕은 붕어빵 장사를 시작하였어요',
+           scope: 'friend',
+           imgName: undefined,
+           img: undefined,
+           emotion: '감사한'
+         }
+       })
+
+Argument where of type DiaryWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 21:55:22 error: 
+Invalid `prisma.diary.update()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:51:44
+
+  48 }
+  49 
+  50 static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
+→ 51   const updateDiary = await prisma.diary.update({
+         where: {
+       ?   PK_diary?: Int
+         },
+         data: {
+           title: '내 일기',
+           subTitle: undefined,
+           content: '젤리왕은 붕어빵 장사를 시작하였어요',
+           scope: 'friend',
+           imgName: undefined,
+           img: undefined,
+           emotion: '감사한'
+         }
+       })
+
+Argument where of type DiaryWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 22:06:41 error: Cannot read properties of undefined (reading 'userId')
+2023-03-27 22:12:07 error: Cannot read properties of undefined (reading 'userId')
+2023-03-27 22:12:09 error: Cannot read properties of undefined (reading 'userId')
+2023-03-27 22:12:10 error: Cannot read properties of undefined (reading 'userId')
+2023-03-27 22:12:20 error: 
+Invalid `prisma.diary.update()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:52:44
+
+  49 
+  50 static async updateDiary(diaryDTO: Partial<diary>, emotion: emotionType) {
+  51   console.log(diaryDTO);
+→ 52   const updateDiary = await prisma.diary.update({
+         where: {
+       ?   PK_diary?: Int
+         },
+         data: {
+           title: '내 일기',
+           subTitle: undefined,
+           content: '젤리왕은 붕어빵 장사를 시작하였어요',
+           scope: 'friend',
+           imgName: undefined,
+           img: undefined,
+           emotion: '감사한'
+         }
+       })
+
+Argument where of type DiaryWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 22:13:32 error: Cannot read properties of undefined (reading 'userId')
+2023-03-27 22:14:48 error: jwt expired
+2023-03-27 22:41:25 error: 
+Invalid `prisma.user.findUnique()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:275:40
+
+  272 }
+  273 
+  274 static async findByUserLodinId(pageDTO: pageInfo) {
+→ 275   const findUser = await prisma.user.findUnique({
+          where: {
+        ?   loginId?: String,
+        ?   PK_user?: Int
+          }
+        })
+
+Argument where of type userWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 23:20:05 error: 
+Invalid `prisma.user.findUnique()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:275:40
+
+  272 }
+  273 
+  274 static async findByUserLodinId(pageDTO: pageInfo) {
+→ 275   const findUser = await prisma.user.findUnique({
+          where: {
+        ?   loginId?: String,
+        ?   PK_user?: Int
+          }
+        })
+
+Argument where of type userWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 23:20:07 error: 
+Invalid `prisma.user.findUnique()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:275:40
+
+  272 }
+  273 
+  274 static async findByUserLodinId(pageDTO: pageInfo) {
+→ 275   const findUser = await prisma.user.findUnique({
+          where: {
+        ?   loginId?: String,
+        ?   PK_user?: Int
+          }
+        })
+
+Argument where of type userWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+
+2023-03-27 23:23:27 error: 
+Invalid `prisma.user.findUnique()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:275:40
+
+  272 }
+  273 
+  274 static async findByUserLodinId(pageDTO: pageInfo) {
+→ 275   const findUser = await prisma.user.findUnique({
+          where: {
+        ?   loginId?: String,
+        ?   PK_user?: Int
+          }
+        })
+
+Argument where of type userWhereUniqueInput needs at least one argument. Available args are listed in green.
+
+Note: Lines with ? are optional.
+

@@ -101,8 +101,8 @@ authRouter.post(
   "/getUserList",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name } = req.body;
-      const userList = await authService.getUserList(name);
+      const { id } = req.body;
+      const userList = await authService.getUserList(id);
       res.status(201).send(userList);
     } catch (error) {
       next(error);
@@ -111,11 +111,11 @@ authRouter.post(
 );
 
 authRouter.get(
-  "/getUserProfile/:name",
+  "/getUserProfile/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name } = req.params;
-      const profile = await authService.getUserProfile(name);
+      const { id } = req.params;
+      const profile = await authService.getUserProfile(id);
       res.status(200).send(profile);
     } catch (error) {
       next(error);

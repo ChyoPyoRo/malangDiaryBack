@@ -111,12 +111,12 @@ class authService {
     const editData = await authRepository.updateUserPW(loginId, hashPW);
     return editData;
   }
-  static async getUserList(name: string) {
-    const userList = await authRepository.getUserList(name);
+  static async getUserList(id: string) {
+    const userList = await authRepository.getUserList(id);
     return userList;
   }
-  static async getUserProfile(name: string) {
-    const profile = await authRepository.findByUserName(name);
+  static async getUserProfile(id: string) {
+    const profile = await authRepository.findByLoginId(id);
     return profile;
   }
   static async editDescription(loginId: string, description: string) {

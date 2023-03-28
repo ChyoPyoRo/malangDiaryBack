@@ -124,3 +124,7 @@ Note: Lines with ? are optional.
 2023-03-28 08:08:14 error: jwt expired
 2023-03-28 08:21:31 error: jwt expired
 2023-03-28 08:22:11 error: Unexpected token  in JSON at position 51
+2023-03-28 15:28:15 error: jwt expired
+2023-03-28 15:39:12 error: jwt expired
+2023-03-28 15:48:54 error: jwt expired
+2023-03-28 15:56:28 error: jwt expired

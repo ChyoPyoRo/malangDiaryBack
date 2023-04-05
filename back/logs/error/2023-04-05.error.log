@@ -39,3 +39,30 @@ Argument CertiNumber: Got invalid value NaN on prisma.createOneemailAuthenticati
 2023-04-05 21:45:05 error: 인증번호가 일치하지 않습니다.
 2023-04-05 21:46:43 error: 인증번호가 일치하지 않습니다.
 2023-04-05 21:46:57 error: 인증번호가 일치하지 않습니다.
+2023-04-05 21:58:31 error: 
+Invalid `prisma.diaryAnswer.create()` invocation in
+O:\emotionDiary\back\back\src\QnA\QnARepository.ts:44:49
+
+  41 public async postAnswerQnA(
+  42   QnA: Pick<diaryAnswer, "questionNumber" | "userId" | "content">
+  43 ): Promise<diaryAnswer | null> {
+→ 44   const postAnswer = await prisma.diaryAnswer.create(
+An operation failed because it depends on one or more records that were required but not found. No 'user' record(s) (needed to inline the relation on 'DiaryAnswer' record(s)) was found for a nested connect on one-to-many relation 'DiaryAnswerTouser'.
+2023-04-05 21:59:40 error: 
+Invalid `prisma.diaryAnswer.create()` invocation in
+O:\emotionDiary\back\back\src\QnA\QnARepository.ts:44:49
+
+  41 public async postAnswerQnA(
+  42   QnA: Pick<diaryAnswer, "questionNumber" | "userId" | "content">
+  43 ): Promise<diaryAnswer | null> {
+→ 44   const postAnswer = await prisma.diaryAnswer.create(
+An operation failed because it depends on one or more records that were required but not found. No 'user' record(s) (needed to inline the relation on 'DiaryAnswer' record(s)) was found for a nested connect on one-to-many relation 'DiaryAnswerTouser'.
+2023-04-05 22:29:53 error: 
+Invalid `prisma.diaryAnswer.create()` invocation in
+O:\emotionDiary\back\back\src\QnA\QnARepository.ts:44:49
+
+  41 public async postAnswerQnA(
+  42   QnA: Pick<diaryAnswer, "questionNumber" | "userId" | "content">
+  43 ): Promise<diaryAnswer | null> {
+→ 44   const postAnswer = await prisma.diaryAnswer.create(
+An operation failed because it depends on one or more records that were required but not found. No 'user' record(s) (needed to inline the relation on 'DiaryAnswer' record(s)) was found for a nested connect on one-to-many relation 'DiaryAnswerTouser'.

@@ -33,7 +33,6 @@ diaryRouter.post(
         img: file?.location,
         imgName: file?.key,
       };
-
       const post: Diary = await diaryService.postingDiary(diaryDTO);
       res.status(201).send(post);
     } catch (error) {

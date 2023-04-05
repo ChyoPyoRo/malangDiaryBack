@@ -11,8 +11,8 @@ async function nodeMailer(email: string) {
     host: "smtp.naver.com",
     port: 587,
     auth: {
-      // user: nodemailerId,
-      user: "ffff",
+      user: nodemailerId,
+      // user: "ffff",
       pass: nodemailerPW,
     },
     secure: false, // 587port에서 STARTTLS 암호화를 사용함

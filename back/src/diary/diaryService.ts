@@ -26,8 +26,8 @@ class diaryService {
     );
     const contentdata = { content: content };
     // 🤖🤖🤖 1. 감정분석 모델   🤖🤖🤖
-    // const emotion: any = await emotionAnalysis(contentdata);
-    const emotion: emotionType = "편안한";
+    const emotion: any = await emotionAnalysis(contentdata);
+    // const emotion: emotionType = "편안한";
 
     const postingDiary: Diary = await diaryRepository.post(diaryDTO, emotion);
 

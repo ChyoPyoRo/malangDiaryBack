@@ -1,0 +1,27 @@
+2023-03-29 23:10:56 error: 
+Invalid `prisma.diary.create()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:17:38
+
+  14 
+  15 class diaryRepository {
+  16   static async post(diaryDTO: diaryInterface, emotion: emotionType) {
+→ 17     const diary = await prisma.diary.create(
+The provided value for the column is too long for the column's type. Column: emotion
+2023-03-29 23:15:35 error: 
+Invalid `prisma.diary.create()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:17:38
+
+  14 
+  15 class diaryRepository {
+  16   static async post(diaryDTO: diaryInterface, emotion: emotionType) {
+→ 17     const diary = await prisma.diary.create(
+The provided value for the column is too long for the column's type. Column: emotion
+2023-03-29 23:17:27 error: 
+Invalid `prisma.diary.create()` invocation in
+O:\emotionDiary\back\back\src\diary\diaryRepository.ts:17:38
+
+  14 
+  15 class diaryRepository {
+  16   static async post(diaryDTO: diaryInterface, emotion: emotionType) {
+→ 17     const diary = await prisma.diary.create(
+The provided value for the column is too long for the column's type. Column: emotion

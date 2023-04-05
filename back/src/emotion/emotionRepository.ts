@@ -30,7 +30,6 @@ class emotionRepository {
     };
 
     return result;
-    return;
   }
 }
 

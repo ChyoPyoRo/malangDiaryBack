@@ -74,12 +74,18 @@ authRouter.post(
         return res.status(400).json({ message: "Need accurate informations" });
       }
       await authService.findByEmail(email);
-      const authnumber = await nodeMailer(email, res);
+
+      const authnumber = await nodeMailer(email);
+      console.log("is it catch error?");
+
+      console.log(authnumber, "\n\nauthnumber data check");
+      console.log("type of authnumber", typeof authnumber);
       const CertiNumber = Number(authnumber);
       await authService.emailAuthSave(email, CertiNumber);
 
       res.status(201).send("이메일이 정상적으로 발송되었습니다");
     } catch (error) {
+      console.log("throw error in try_catch");
       next(error);
     }
   }

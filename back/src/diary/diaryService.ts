@@ -43,7 +43,7 @@ class diaryService {
     );
     const contentdata = { content: content };
     // const emotion: any = await emotionAnalysis(contentdata);
-    const emotionAnalysis: emotionType = "감사한";
+    const emotionAnalysis: emotionType = "긍정";
     const emotion: emotionType = diaryDTO.emotion
       ? diaryDTO.emotion
       : emotionAnalysis;

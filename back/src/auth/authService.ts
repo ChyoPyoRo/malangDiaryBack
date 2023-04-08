@@ -112,8 +112,11 @@ class authService {
     return editData;
   }
   static async getUserList(id: string) {
-    const userList = await authRepository.getUserList(id);
-    return userList;
+    let result = [];
+    const userIdList = await authRepository.getUserListById(id);
+    const userNameList = await authRepository.getUserListByName(id);
+    result = [...userIdList, ...userNameList];
+    return result;
   }
   static async getUserProfile(id: string) {
     const profile = await authRepository.findByLoginId(id);

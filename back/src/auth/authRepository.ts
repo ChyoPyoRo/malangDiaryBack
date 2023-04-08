@@ -87,10 +87,20 @@ class authRepository {
     });
     return findUser;
   }
-  static async getUserList(id: string) {
+  static async getUserListById(id: string) {
     const userList = await prisma.user.findMany({
       where: {
         loginId: {
+          contains: id,
+        },
+      },
+    });
+    return userList;
+  }
+  static async getUserListByName(id: string) {
+    const userList = await prisma.user.findMany({
+      where: {
+        name: {
           contains: id,
         },
       },

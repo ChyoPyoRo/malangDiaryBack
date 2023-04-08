@@ -83,15 +83,24 @@ class friendRepository {
     return result;
   }
   //알림 등록해준 사람 sended값 true로 바꾸기
-  static async updateAcceptedRequest(data: standByFriendDTO) {
+  static async updateAcceptedRequest(requsetPK: number) {
     await prisma.standByFriend.update({
       where: {
-        PK_standByFriend: data.PK_standByFriend,
+        PK_standByFriend: requsetPK,
       },
       data: {
         sended: true,
       },
     });
+  }
+
+  static async findRequestByPK(requestPK: number) {
+    const result = await prisma.standByFriend.findUnique({
+      where: {
+        PK_standByFriend: requestPK,
+      },
+    });
+    return result;
   }
 
   //   TODO: freind 외래키 수정됨에 따라 관련 로직 수정해야함

@@ -170,13 +170,11 @@ class friendService {
       waitRequest[key].requesterName = requesterData?.name;
       result.push(waitRequest[key]);
     }
-
     for (let key in acceptedRequest) {
       const respondentData = await loginIdCheck(
         acceptedRequest[key].respondentId
       );
       console.log(acceptedRequest[key], "\nfriendService.ts");
-      await friendRepository.updateAcceptedRequest(acceptedRequest[key]);
       //이름만 불러오기
       acceptedRequest[key].respondentName = respondentData?.name;
       const requesterData = await loginIdCheck(
@@ -185,6 +183,7 @@ class friendService {
       acceptedRequest[key].requesterName = requesterData?.name;
       result.push(acceptedRequest[key]);
     }
+
     result = [...waitRequest, ...acceptedRequest];
     console.log(typeof result);
     console.log(result);
@@ -193,6 +192,10 @@ class friendService {
     );
 
     return result;
+  }
+
+  static async checkAcceptRequest(requestPK: number) {
+    await friendRepository.updateAcceptedRequest(requestPK);
   }
 
   static async findAllFriend(friendObject: Partial<friend>) {

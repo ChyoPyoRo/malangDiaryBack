@@ -124,6 +124,23 @@ friendRouter.get(
   }
 );
 
+friendRouter.patch(
+  "/accept/check",
+  loginRequired,
+  async (req: Request, res: Response, next: NextFunction) => {
+    //친구 수락됨 알림 확인용 라우터
+    try {
+      const currentUserId: Partial<friend> = req.body.currentUserId;
+      const requestPK: number = req.body.id;
+
+      await friendService.checkAcceptRequest(requestPK);
+      res.status(201).json({ message: "확인 완료" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 friendRouter.get(
   "/list",
   loginRequired,

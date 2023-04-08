@@ -1,22 +1,10 @@
 export type emotionType =
-  | "신이 난"
-  | "편안한"
-  | "감사한"
-  | "자신감"
-  | "불안"
-  | "슬픔"
-  | "분노"
-  | "상처";
+  | "긍정"
+  | "부정";
 
 export interface emotion {
-  Excited: number;
-  Comfort: number;
-  Confidence: number;
-  thanks: number;
-  Sadness: number;
-  Anger: number;
-  Anxiety: number;
-  hurt: number;
+  Positive: number;
+  Negative: number;
 }
 
 export type Scope = "all" | "friend" | "off";

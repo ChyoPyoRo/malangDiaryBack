@@ -17,14 +17,16 @@ class emotionService {
             const Startdate = new Date(startDate);
             const Enddate = new Date(endDate);
             const emotionType = [
-                "신이 난",
-                "편안한",
-                "감사한",
-                "자신감",
-                "불안",
-                "슬픔",
-                "분노",
-                "상처",
+                "긍정",
+                "부정",
+                // "신이 난",
+                // "편안한",
+                // "감사한",
+                // "자신감",
+                // "불안",
+                // "슬픔",
+                // "분노",
+                // "상처",
             ];
             const emotionResult = yield Promise.all(emotionType.map((emotion) => emotionController_1.emotionController.getEmotions(userId, Startdate, Enddate, emotion)));
             const percentList = emotionResult.map((x) => x.emotion);

@@ -35,6 +35,13 @@ class emotionRepository {
 
 export { emotionRepository };
 
+/* 1차 release
+긍정
+부정
+*/
+
+
+
 /*
 Excited
 Comfort

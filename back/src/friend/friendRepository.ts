@@ -79,7 +79,6 @@ class friendRepository {
       },
     });
     console.log("repo", result);
-
     return result;
   }
   //알림 등록해준 사람 sended값 true로 바꾸기

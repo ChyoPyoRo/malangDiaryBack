@@ -132,8 +132,7 @@ friendRouter.patch(
     try {
       const currentUserId: Partial<friend> = req.body.currentUserId;
       const requestPK: number = req.body.id;
-
-      await friendService.checkAcceptRequest(requestPK);
+      await friendService.checkAcceptRequest(requestPK, currentUserId);
       res.status(201).json({ message: "확인 완료" });
     } catch (error) {
       next(error);

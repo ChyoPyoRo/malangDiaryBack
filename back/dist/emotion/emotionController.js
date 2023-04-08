@@ -35,6 +35,15 @@ class emotionController {
     }
 }
 exports.emotionController = emotionController;
+/* 1차 배포 
+Positive
+Negative
+
+긍정
+부정
+*/
+
+
 /*
 Excited
 Comfort

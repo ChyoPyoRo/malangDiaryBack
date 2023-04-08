@@ -20,4 +20,5 @@ export interface standByFriendDTO extends standByFriend {
   message?: string;
   respondentName?: string;
   requesterName?: string;
+  sended: boolean; // schema에서는 boolean으로 했는데 그 값이 제대로
 }

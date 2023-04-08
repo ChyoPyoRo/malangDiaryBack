@@ -90,6 +90,7 @@ model standByFriend {
   requesterId      String //loginId
   respondentId     String //loginId
   relationship     Int      @default(0) @db.TinyInt
+  sended           Boolean  @default(false)
   createAt         DateTime @default(now())
 }
 

@@ -24,7 +24,7 @@ friendRouter.get(
         respondentId: String(req.params.id),
         requesterId: req.body.currentUserId,
       };
-
+      console.log(standByFriendDTO);
       const friendRequest = await friendService.sendRequest(standByFriendDTO);
       console.log("router2", friendRequest);
       res.status(201).json(friendRequest);

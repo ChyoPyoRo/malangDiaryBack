@@ -154,12 +154,14 @@ class friendService {
 
   static async readAllRequest(currentUserId: Partial<friend>) {
     console.log("service - read Request");
-
+    console.log(currentUserId);
     let result: Array<standByFriendDTO> = [];
+    //내가 받은 요청 중 아직 처리가 되지 않은 것
     const waitRequest: Array<standByFriendDTO> =
       await friendRepository.readWaitResponse(currentUserId);
-    const acceptRequest: Array<standByFriendDTO> =
-      await friendRepository.readAcceptRequest(currentUserId);
+    //내가 보낸 요청중 수락이 된 것, 한번 보내면 사라져야 함
+    const acceptedRequest: Array<standByFriendDTO> =
+      await friendRepository.readAcceptedRequest(currentUserId);
 
     for (let key in waitRequest) {
       const respondentData = await loginIdCheck(waitRequest[key].respondentId);
@@ -168,16 +170,22 @@ class friendService {
       waitRequest[key].requesterName = requesterData?.name;
       result.push(waitRequest[key]);
     }
-    for (let key in acceptRequest) {
+
+    for (let key in acceptedRequest) {
       const respondentData = await loginIdCheck(
-        acceptRequest[key].respondentId
+        acceptedRequest[key].respondentId
       );
-      acceptRequest[key].respondentName = respondentData?.name;
-      const requesterData = await loginIdCheck(acceptRequest[key].requesterId);
-      acceptRequest[key].requesterName = requesterData?.name;
-      result.push(acceptRequest[key]);
+      console.log(acceptedRequest[key], "\nfriendService.ts");
+      await friendRepository.updateAcceptedRequest(acceptedRequest[key]);
+      //이름만 불러오기
+      acceptedRequest[key].respondentName = respondentData?.name;
+      const requesterData = await loginIdCheck(
+        acceptedRequest[key].requesterId
+      );
+      acceptedRequest[key].requesterName = requesterData?.name;
+      result.push(acceptedRequest[key]);
     }
-    result = [...waitRequest, ...acceptRequest];
+    result = [...waitRequest, ...acceptedRequest];
     console.log(typeof result);
     console.log(result);
     result = result.sort(

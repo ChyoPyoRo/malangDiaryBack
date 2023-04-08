@@ -12,9 +12,9 @@ class friendRepository {
     //승인대기 0, 수락1, 거절2, 취소됨3
     const newRequest = await prisma.standByFriend.create({
       data: {
-        requesterId: standByFriendDTO.respondentId,
-        respondentId: standByFriendDTO.requesterId,
-        relationship: 0,
+        requesterId: standByFriendDTO.requesterId,
+        respondentId: standByFriendDTO.respondentId,
+        // relationship: 0, sended : false -> default
       },
     });
     return newRequest;
@@ -70,16 +70,28 @@ class friendRepository {
     console.log("repo", result);
     return result;
   }
-  static async readAcceptRequest(requester: Partial<friend>) {
+  static async readAcceptedRequest(requester: Partial<friend>) {
     const result = await prisma.standByFriend.findMany({
       where: {
         requesterId: String(requester),
         relationship: 1,
+        sended: false,
       },
     });
     console.log("repo", result);
 
     return result;
+  }
+  //알림 등록해준 사람 sended값 true로 바꾸기
+  static async updateAcceptedRequest(data: standByFriendDTO) {
+    await prisma.standByFriend.update({
+      where: {
+        PK_standByFriend: data.PK_standByFriend,
+      },
+      data: {
+        sended: true,
+      },
+    });
   }
 
   //   TODO: freind 외래키 수정됨에 따라 관련 로직 수정해야함

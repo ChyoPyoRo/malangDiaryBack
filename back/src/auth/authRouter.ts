@@ -6,14 +6,12 @@ import { describe } from "node:test";
 import { stringify } from "node:querystring";
 // import {generateAccessToken, sendAuthNumber} from '../'
 import { nodeMailer } from "../middlewares/nodeMailer";
-
 const authRouter = Router();
 authRouter.post(
   "/signup",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { loginId, email, name, password, gender } = req.body;
-
       if (
         !req.body.loginId ||
         !req.body.email ||
@@ -41,7 +39,6 @@ authRouter.post(
     // const returnData:
   }
 );
-
 authRouter.post(
   "/login",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -64,7 +61,6 @@ authRouter.post(
     }
   }
 );
-
 authRouter.post(
   "/sendEmail",
   async (req: Request, res: Response, next: NextFunction) => {

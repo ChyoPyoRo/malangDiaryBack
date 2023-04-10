@@ -203,7 +203,7 @@ class friendService {
       const message: string = "해당 요청은 존재하지 않습니다";
       throw new Error(message);
     } else if (aa.requesterId != currentUserId) {
-      const message: string = "해당 요청의 응답자가 아닙니다";
+      const message: string = "해당 요청의 요청자가 아닙니다";
       throw new Error(message);
     } else {
       await friendRepository.updateAcceptedRequest(requestPK);

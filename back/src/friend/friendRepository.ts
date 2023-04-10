@@ -40,6 +40,7 @@ class friendRepository {
     const checkRequest = await prisma.standByFriend.findFirst({
       where: {
         respondentId: standByFriendDTO.respondentId,
+        requesterId: standByFriendDTO.requesterId,
       },
     });
     return checkRequest;

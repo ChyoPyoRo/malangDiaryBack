@@ -3,3 +3,6 @@ node_modules
 .env
 index.html
 logs
+prisma/migrations
+dist
+types

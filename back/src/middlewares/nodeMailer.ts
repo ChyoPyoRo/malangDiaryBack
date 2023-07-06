@@ -27,7 +27,7 @@ async function nodeMailer(email: string) {
   const mailOptions = {
     from: nodemailerId, // 발송 주체
     to: email, // 인증을 요청한 이메일 주소
-    subject: "[ 감정일기 ] 이메일 확인 인증번호 안내", // 이메일 제목
+    subject: "[ 말랑일기 ] 이메일 확인 인증번호 안내", // 이메일 제목
     text: ` 아래 인증번호를 확인하여 이메일 주소 인증을 완료해 주세요.\n\n
        ✅ 인증번호 6자리 : ${authNumber}`, // 이메일 내용
   };

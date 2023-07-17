@@ -4,6 +4,7 @@ import exp from "constants";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
+import { lostPasswordMailer, lostIdMailer } from "../middlewares/nodeMailer";
 import { authRepository } from "./authRepository";
 import { user } from "@prisma/client";
 class authService {
@@ -145,7 +146,7 @@ class authService {
     const editData: user = await authRepository.updateWithdrawal(loginId);
     return editData;
   }
-  static async findByEmail(email: string) {
+  static async checkWithdrawlWithFindByEmail(email: string) {
     const user = await authRepository.findByEmail(email);
     if (user[0]) {
       if (user[0].withdrawal === 0) {
@@ -153,6 +154,44 @@ class authService {
         throw new Error(errorMessage);
       }
     }
+    return;
+  }
+  static async checkEmailandId(email: string, id: string) {
+    const user = await authRepository.findByLoginId(id);
+    console.log(user);
+    if (!user) {
+      //id가 존재하지 않을 시
+      const errorMessage: string = "id doesn't exists.";
+      throw new Error(errorMessage);
+    }
+    //존재시 email과 일치하는지 확인
+    if (user.email != email) {
+      const errorMessage: string = "email doensn't match";
+      throw new Error(errorMessage);
+    }
+    //동일한 id와 동일한 email을 가지고 있는 계정이 존재하면 return
+    if (user.withdrawal === 1) {
+      const errorMessage: string = "이미 탈퇴한 회원입니다.";
+      throw new Error(errorMessage);
+    }
+    return user;
+  }
+  static async changeLostPW(user: user) {
+    //prisma에서 선언한 데이터
+    const newPW = (Math.floor(Math.random() * 8889) + 1111).toString();
+    const hashPW: string = await bcrypt.hash(newPW, 10);
+    await authRepository.updateUserPW(user.loginId, hashPW);
+    await lostPasswordMailer(user.email, newPW);
+    return;
+  }
+
+  static async findIdAndSendEmail(email: string) {
+    const user = await authRepository.findByEmail(email);
+    if (!user) {
+      const errorMessage: string = "Email doesn't exist";
+      throw new Error(errorMessage);
+    }
+    await lostIdMailer(email, user[0].loginId);
     return;
   }
   static async emailAuthSave(email: string, CertiNumber: number) {

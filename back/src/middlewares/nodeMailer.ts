@@ -45,4 +45,75 @@ async function nodeMailer(email: string) {
   return authNumber;
 }
 
-export { nodeMailer };
+async function lostPasswordMailer(email: string, password: string) {
+  let smtpTransport = nodemailer.createTransport({
+    service: "naver",
+    host: "smtp.naver.com",
+    port: 587,
+    auth: {
+      user: nodemailerId,
+      // user: "ffff",
+      pass: nodemailerPW,
+    },
+    secure: false,
+    tls: {
+      rejectUnauthorized: true,
+    },
+  });
+
+  const mailOptions = {
+    from: nodemailerId,
+    to: email,
+    subject: "[ 말랑일기 ] 비밀번호 변경 안내",
+    text: ` 해당 비밀번호는 로그인 후 변경부탁드립니다\n\n
+       ✅ 새로운 비밀번호 : ${password}`,
+  };
+  console.log("Ready to send Mail ");
+  smtpTransport
+    .sendMail(mailOptions)
+    .then((info) => {
+      console.log(info);
+    })
+    .catch((error) => {
+      console.log(error, "\x1b[41m 해당 에러, 전송 처리 아직 못함 \x1b[0m");
+      throw new Error(error);
+    });
+  return;
+}
+async function lostIdMailer(email: string, id: string) {
+  let smtpTransport = nodemailer.createTransport({
+    service: "naver",
+    host: "smtp.naver.com",
+    port: 587,
+    auth: {
+      user: nodemailerId,
+      // user: "ffff",
+      pass: nodemailerPW,
+    },
+    secure: false,
+    tls: {
+      rejectUnauthorized: true,
+    },
+  });
+
+  const mailOptions = {
+    from: nodemailerId,
+    to: email,
+    subject: "[ 말랑일기 ] ID 안내",
+    text: ` ID 문의가 들어와서 전달드립니다\n\n
+       ✅ ID : ${id}`, // 이메일 내용
+  };
+  console.log("Ready to send Mail ");
+  smtpTransport
+    .sendMail(mailOptions)
+    //sendMail의 return 값은 info 이거나 error 이다
+    .then((info) => {
+      console.log(info);
+    })
+    .catch((error) => {
+      console.log(error, "\x1b[41m 해당 에러, 전송 처리 아직 못함 \x1b[0m");
+      throw new Error(error);
+    });
+  return;
+}
+export { nodeMailer, lostPasswordMailer, lostIdMailer };

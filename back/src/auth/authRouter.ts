@@ -69,7 +69,7 @@ authRouter.post(
       if (!email || email.length === 0) {
         return res.status(400).json({ message: "Need accurate informations" });
       }
-      await authService.findByEmail(email);
+      await authService.checkWithdrawlWithFindByEmail(email);
 
       const authnumber = await nodeMailer(email);
       console.log("is it catch error?");
@@ -219,9 +219,47 @@ authRouter.patch(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId: string = req.body["currentUserId"];
-
       const editResult = await authService.editWithdrawal(userId);
       res.status(200).send(editResult);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+authRouter.get(
+  "/find/password",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reqEmail = req.query.email as string;
+      const reqId = req.query.id as string;
+      console.log("비밀번호 찾기");
+      //값 전달 확인
+      if (!reqEmail || reqEmail.length === 0) {
+        return res.status(400).json({ message: "Need accurate informations" });
+      } else if (!reqId || reqId.length === 0) {
+        return res.status(400).json({ message: "Need accurate informations" });
+      }
+      const existUser = await authService.checkEmailandId(reqEmail, reqId);
+      await authService.changeLostPW(existUser);
+      //탈퇴 여부 확인
+      res.status(200).send({ message: "Password replacement successful" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+authRouter.get(
+  "/find/id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log("id 찾기");
+      const reqEmail = req.query.email as string;
+      if (!reqEmail) {
+        return res.status(400).json({ message: "Need accurate informations" });
+      }
+      await authService.findIdAndSendEmail(reqEmail);
+      res.status(200).send({ message: "Forwarding ID to email " });
     } catch (error) {
       next(error);
     }

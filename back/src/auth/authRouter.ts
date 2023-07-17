@@ -236,14 +236,14 @@ authRouter.get(
       console.log("비밀번호 찾기");
       //값 전달 확인
       if (!reqEmail || reqEmail.length === 0) {
-        return res.status(400).json({ message: "Need accurate informations" });
+        return res.status(400).json({ message: "Query 값이 전달 안됬습니다" });
       } else if (!reqId || reqId.length === 0) {
-        return res.status(400).json({ message: "Need accurate informations" });
+        return res.status(400).json({ message: "Query 값이 전달 안됬습니다" });
       }
       const existUser = await authService.checkEmailandId(reqEmail, reqId);
       await authService.changeLostPW(existUser);
       //탈퇴 여부 확인
-      res.status(200).send({ message: "Password replacement successful" });
+      res.status(200).send({ message: "이메일을 성공적으로 전송했습니다." });
     } catch (error) {
       next(error);
     }
@@ -256,10 +256,10 @@ authRouter.get(
       console.log("id 찾기");
       const reqEmail = req.query.email as string;
       if (!reqEmail) {
-        return res.status(400).json({ message: "Need accurate informations" });
+        return res.status(400).json({ message: "Query 값이 전달 안됬습니다" });
       }
       await authService.findIdAndSendEmail(reqEmail);
-      res.status(200).send({ message: "Forwarding ID to email " });
+      res.status(200).send({ message: "아이디를 이메일로 전달했습니다." });
     } catch (error) {
       next(error);
     }

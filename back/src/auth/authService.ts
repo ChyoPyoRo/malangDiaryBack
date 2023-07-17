@@ -161,17 +161,17 @@ class authService {
     console.log(user);
     if (!user) {
       //id가 존재하지 않을 시
-      const errorMessage: string = "id doesn't exists.";
+      const errorMessage: string = "Id가 존재하지 않습니다";
       throw new Error(errorMessage);
     }
     //존재시 email과 일치하는지 확인
     if (user.email != email) {
-      const errorMessage: string = "email doensn't match";
+      const errorMessage: string = "Email과 Id가 일치하지 않습니다";
       throw new Error(errorMessage);
     }
     //동일한 id와 동일한 email을 가지고 있는 계정이 존재하면 return
     if (user.withdrawal === 1) {
-      const errorMessage: string = "이미 탈퇴한 회원입니다.";
+      const errorMessage: string = "탈퇴한 계정입니다";
       throw new Error(errorMessage);
     }
     return user;
@@ -187,8 +187,8 @@ class authService {
 
   static async findIdAndSendEmail(email: string) {
     const user = await authRepository.findByEmail(email);
-    if (!user) {
-      const errorMessage: string = "Email doesn't exist";
+    if (!user[0]) {
+      const errorMessage: string = "해당 Email로 가입한 계정이 없습니다";
       throw new Error(errorMessage);
     }
     await lostIdMailer(email, user[0].loginId);

@@ -183,6 +183,7 @@ diaryRouter.get(
     try {
       const { postingId } = req.params;
       const postId = Number(postingId);
+      console.log(postId)
       const diary = await diaryService.findOne(postId);
 
       res.status(200).send(diary);

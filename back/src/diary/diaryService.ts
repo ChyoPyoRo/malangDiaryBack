@@ -162,7 +162,10 @@ class diaryService {
 
   static async findOne(postId: number) {
     const one: any = await diaryRepository.getDiaryOne(postId);
-    const userID: string = one.userId;
+    if(!one){
+      throw Error("존재하지 않는 일기입니다.");
+    }
+    const userID: string = one.writer_id;
     const user = await loginIdCheck(userID);
     return { userName: user?.name, diary: one };
   }

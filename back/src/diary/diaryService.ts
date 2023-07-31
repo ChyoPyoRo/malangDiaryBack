@@ -47,7 +47,8 @@ class diaryService {
     // const emotion: emotionType = diaryDTO.emotion
     //   ? diaryDTO.emotion
     //   : emotionAnalysis;
-    await diaryRepository.updateUserEmotion(diaryDTO, emotion);
+    // 최신 감정에 맞춰서 유저 감정을 업데이트 하는 기능은 취소되어서 삭제 (23.08.01)
+    // await diaryRepository.updateUserEmotion(diaryDTO, emotion);
     const modifyDiary: Diary = await diaryRepository.updateDiary(
       diaryDTO,
       emotion

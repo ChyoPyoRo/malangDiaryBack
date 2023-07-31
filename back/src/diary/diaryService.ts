@@ -68,9 +68,12 @@ class diaryService {
   // 특정 유저의 다이어리
   static async getUserList(pageDTO: pageInfo) {
     const user = await diaryRepository.findByUserLodinId(pageDTO);
+    if(!user){
+      throw Error("해당 유저는 존재하지 않습니다.")
+    }
     pageDTO = {
       ...pageDTO,
-      friendId: user?.loginId,
+      friendId: user.loginId,
     };
     const isFriend = await diaryRepository.FriendId(pageDTO);
 
@@ -97,13 +100,18 @@ class diaryService {
   // 특정 유저 다이어리 비회원
   static async getnonUserList(pageDTO: pageInfo) {
     const otherUser = await diaryRepository.findByUserLodinId(pageDTO);
+    if(!otherUser){
+      throw Error("해당 유저는 존재하지 않습니다.")
+    }
     pageDTO = {
       ...pageDTO,
-      friendId: otherUser?.loginId,
+      friendId: otherUser.loginId,
     };
     let List: responseObjectForm = await diaryRepository.getAllScope(pageDTO);
-
-    const user = await loginIdCheck(List.diary[0]?.writer_id);
+    if(!List){
+      throw Error("작성된 일기가 없습니다.")
+    }
+    const user = await loginIdCheck(List.diary[0].writer_id);
 
     List = {
       ...List,

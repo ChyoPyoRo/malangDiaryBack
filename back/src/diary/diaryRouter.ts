@@ -23,6 +23,7 @@ diaryRouter.post(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      //불필요한 userName을 왜받는지 확인하고 이유 없으면 제거 - 23.08.01
       const file: any = req.file;
       const diaryDTO: diaryInterface = {
         writer_id: req.body.currentUserId,
@@ -48,6 +49,7 @@ diaryRouter.patch(
   loginRequired,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      //req.body.emotion이 존재하면 ai emotion이 적용 안되는지 확인 필요 - 23.08.01
       const file: any = req.file;
       const diaryDTO: Partial<diary> = {
         writer_id: req.body.currentUserId,
@@ -183,6 +185,7 @@ diaryRouter.get(
     try {
       const { postingId } = req.params;
       const postId = Number(postingId);
+      console.log(postId)
       const diary = await diaryService.findOne(postId);
 
       res.status(200).send(diary);

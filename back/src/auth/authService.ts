@@ -121,6 +121,9 @@ class authService {
   }
   static async getUserProfile(id: string) {
     const profile = await authRepository.findByLoginId(id);
+    if(!profile){
+      throw Error("해당 유저는 존재하지 않습니다.");
+    }
     return profile;
   }
   static async editDescription(loginId: string, description: string) {

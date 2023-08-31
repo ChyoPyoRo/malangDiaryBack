@@ -51,7 +51,6 @@ model Diary {
   @@index([writer_id], map: "diary_userId_fkey")
 }
 
-//감정
 model diaryEmotion {
   Excited    Float @default(0)
   Comfort    Float @default(0)
@@ -67,7 +66,7 @@ model diaryEmotion {
 
 model message {
   id       String   @id @unique @default(uuid())
-  userId   String //loginId
+  userId   String
   text     String   @db.VarChar(200)
   createAt DateTime @default(now())
   room     String
@@ -80,16 +79,16 @@ model message {
 
 model chatRoom {
   id        String    @id @unique @default(uuid())
-  userIdFst String //loginId
-  userIdSnd String //loginId + 둘의 차이는 모시깽이
+  userIdFst String
+  userIdSnd String
   latest    DateTime
   message   message[]
 }
 
 model standByFriend {
   PK_standByFriend Int      @id @unique @default(autoincrement())
-  requesterId      String //loginId
-  respondentId     String //loginId
+  requesterId      String
+  respondentId     String
   relationship     Int      @default(0) @db.TinyInt
   sended           Boolean  @default(false)
   createAt         DateTime @default(now())
@@ -97,8 +96,8 @@ model standByFriend {
 
 model friend {
   id       Int    @id @unique @default(autoincrement())
-  friendId String // loginId
-  userId   String // loginId
+  friendId String
+  userId   String
   user     user   @relation(fields: [friendId], references: [loginId])
 
   @@index([friendId], map: "friend_friendId_fkey")

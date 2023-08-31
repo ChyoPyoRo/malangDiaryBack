@@ -6,4 +6,4 @@ logs
 prisma/migrations
 dist
 types
-logs
+logs/*

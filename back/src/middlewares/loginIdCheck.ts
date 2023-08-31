@@ -6,6 +6,7 @@ async function loginIdCheck(userId: string) {
     return null;
   }
   const userData = await authRepository.findByLoginId(String(userId));
+  console.log(userData);
   console.log(userData?.name);
   return userData;
 }

@@ -8,6 +8,7 @@ import { emotionRouter } from "./emotion/emotionRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import { chatRouter } from "./chat/chatRouter";
 import { QnARouter } from "./QnA/QnARouter";
+import { calendarRouter } from "./calendar/calendarRouter";
 import { createServer } from "http";
 import { setUpSocket } from "./component/socket";
 import { logger } from "./configs/winston";
@@ -32,7 +33,7 @@ app.use("/chat", chatRouter);
 app.use("/friend", friendRouter);
 app.use("/emotion", emotionRouter);
 app.use("/QnA", QnARouter);
-
+app.use("/calendar", calendarRouter);
 const httpServer = createServer(app);
 setUpSocket(httpServer);
 
